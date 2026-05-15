@@ -133,18 +133,36 @@ def draw_duck(app: App, width: int, height: int) -> str:
     # Truncate input to avoid wrapping
     max_input = width - len("Talk to Duck: ") - len(footer) - 2
     display_input = app.input_buffer[-max_input:] if len(app.input_buffer) > max_input else app.input_buffer
-    input_line = f"{COLORS['white']}Talk to Duck{footer}: {display_input}█"
+    input_line = f"{COLORS['white']}Talk to Duck{footer}: {display_input}"
     frame_lines.append(input_line)
 
     # Return exactly height-1 lines to avoid triggering a scroll
     return frame_lines[:height-1]
 
 def render_frame(app: App, width: int, height: int):
+    # Hide cursor while drawing to avoid "ghosting"
+    sys.stdout.write(HIDE_CURSOR)
+    
     lines = draw_duck(app, width, height)
     output = []
     for i, line in enumerate(lines):
         # Move to exactly row i+1, column 1 and print the line
         output.append(move_to(i + 1, 1) + line)
+    
+    # Calculate cursor position at the end of the input line
+    # The input line is the last line in our list
+    last_line_idx = len(lines)
+    footer = " (ESC: Q | TAB: C | H: H | F: F)"
+    # Length of "Talk to Duck" + footer + ": " + display_input
+    # We need to be careful with display_input truncation again
+    max_input = width - len("Talk to Duck: ") - len(footer) - 2
+    display_input = app.input_buffer[-max_input:] if len(app.input_buffer) > max_input else app.input_buffer
+    
+    cursor_col = len("Talk to Duck") + len(footer) + len(": ") + len(display_input) + 1
+    
+    # Move to the input position and show the cursor
+    output.append(move_to(last_line_idx, cursor_col))
+    output.append(SHOW_CURSOR)
     
     sys.stdout.write("".join(output))
     sys.stdout.flush()
