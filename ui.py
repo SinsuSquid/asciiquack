@@ -39,35 +39,55 @@ def draw_duck(app: App, width: int, height: int) -> Text:
     y = max(0, y - hat_height)
     
     # Create a grid for the animation area
-    lines = [[" " for _ in range(width)] for _ in range(height)]
-    
-    # Draw breadcrumbs
-    for bx, by in app.breadcrumbs:
-        if 0 <= bx < width and 0 <= by < height:
-            lines[by][bx] = "."
-
-    # Draw duck onto grid (simplified for now, just text is easier)
+    # Use a more efficient way to build the grid
     text = Text()
+    
+    # Pre-calculate breadcrumb positions for quick lookup
+    crumbs = set(app.breadcrumbs)
+
     for row_idx in range(height):
-        row_text = "".join(lines[row_idx])
         # If the duck is on this row, overlay it
         if y <= row_idx < y + len(duck_art):
             duck_row = duck_art[row_idx - y]
-            # Overlay duck_row onto row_text at position x
-            prefix = row_text[:x]
-            suffix = row_text[x + len(duck_row):]
-            text.append(prefix)
+            
+            # Draw row with crumbs and duck overlay
+            row_chars = []
+            for col_idx in range(width):
+                if x <= col_idx < x + len(duck_row):
+                    # We'll append the duck after this loop for styling
+                    break
+                if (col_idx, row_idx) in crumbs:
+                    row_chars.append(".")
+                else:
+                    row_chars.append(" ")
+            
+            prefix = "".join(row_chars)
+            text.append(prefix, style="yellow")
             text.append(duck_row, style=app.color)
-            text.append(suffix + "\n")
+            
+            # Remaining suffix
+            suffix_start = x + len(duck_row)
+            suffix_chars = []
+            for col_idx in range(suffix_start, width):
+                if (col_idx, row_idx) in crumbs:
+                    suffix_chars.append(".")
+                else:
+                    suffix_chars.append(" ")
+            text.append("".join(suffix_chars) + "\n", style="yellow")
         else:
-            text.append(row_text + "\n", style="yellow")
+            row_chars = []
+            for col_idx in range(width):
+                if (col_idx, row_idx) in crumbs:
+                    row_chars.append(".")
+                else:
+                    row_chars.append(" ")
+            text.append("".join(row_chars) + "\n", style="yellow")
     return text
 
-def update_layout(layout: Layout, app: App):
+def update_layout(layout: Layout, app: App, width: int, height: int):
     # Animation area
-    # We'll need the size to properly position the duck, but for now we'll guess or use fixed
     layout["animation"].update(
-        Panel(draw_duck(app, 40, 15), title="Quack View", border_style="blue")
+        Panel(draw_duck(app, width, height), title="Quack View", border_style="blue")
     )
     
     # Chat area
