@@ -24,10 +24,15 @@ class App:
         self.color = self.colors[(current_idx + 1) % len(self.colors)]
         self.add_message("System", f"Duck changed color to {self.color}!")
 
-    def feed(self):
+    def feed(self, width: int, height: int):
         import random
-        bx = int(self.duck.x) + random.randint(-5, 15)
-        by = int(self.duck.y) + random.randint(-2, 5)
+        anim_height = (height * 3) // 4
+        water_line = anim_height // 2
+        
+        # Spawn breadcrumbs only in the water area
+        bx = random.randint(0, width - 1)
+        by = random.randint(water_line, anim_height - 1)
+        
         self.breadcrumbs.append((bx, by))
         if len(self.breadcrumbs) > 20:
             self.breadcrumbs.pop(0)
@@ -63,13 +68,13 @@ class App:
         if eaten_some:
             self.process_quack("munch munch!")
 
-    def handle_input(self, char: str):
+    def handle_input(self, char: str, width: int, height: int):
         if char == "\t":  # TAB
             self.cycle_color()
         elif char.lower() == "h" and not self.input_buffer:
             self.cycle_hat()
         elif char.lower() == "f" and not self.input_buffer:
-            self.feed()
+            self.feed(width, height)
         elif char == "\r" or char == "\n":
             if self.input_buffer.strip():
                 self.add_message("You", self.input_buffer)

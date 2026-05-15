@@ -61,7 +61,7 @@ def main():
                         app.running = False
                         break
                     else:
-                        app.handle_input(char)
+                        app.handle_input(char, width, height)
                 
                 # Update UI
                 render_frame(app, width, height)
