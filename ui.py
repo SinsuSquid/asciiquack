@@ -60,16 +60,20 @@ def draw_duck(app: App, width: int, height: int) -> str:
     height = height - 1
     anim_height = (height * 3) // 4
     
+    wave_surface_base = anim_height // 2
+
     for row_idx in range(anim_height):
-        is_water = row_idx >= (anim_height // 2)
-        color = water_color if is_water else COLORS["yellow"]
-        
         row_str = ""
         duck_row = None
         if y <= row_idx < y + len(duck_art):
             duck_row = duck_art[row_idx - y]
-        
+
         for col_idx in range(width):
+            # Wave surface undulates per-column for vertical wave height
+            wave_offset = int(math.sin(col_idx * 0.1 + app.duck.tick * 0.15) * 2)
+            is_water = row_idx >= wave_surface_base + wave_offset
+            color = water_color if is_water else COLORS["yellow"]
+
             # Background character
             if (col_idx, row_idx) in crumbs:
                 bg_char = "."
@@ -77,7 +81,7 @@ def draw_duck(app: App, width: int, height: int) -> str:
                 bg_char = wave_chars[(col_idx + app.duck.tick) // 5 % len(wave_chars)]
             else:
                 bg_char = " "
-            
+
             # Duck character?
             if duck_row is not None and x <= col_idx < x + len(duck_row):
                 duck_char = duck_row[col_idx - x]
@@ -91,7 +95,7 @@ def draw_duck(app: App, width: int, height: int) -> str:
                     row_str += color + bg_char + RESET_COLOR
             else:
                 row_str += color + bg_char + RESET_COLOR
-        
+
         frame_lines.append(row_str)
 
     # Chat area
@@ -158,3 +162,4 @@ def render_frame(app: App, width: int, height: int):
     sys.stdout.flush()
 
 import sys
+
