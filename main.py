@@ -37,11 +37,17 @@ def main():
                 size = os.get_terminal_size()
                 width, height = size.columns, size.lines
 
-                # Randomly change target
+                # Randomly change target to simulate "swimming around"
                 if random.random() < 0.01:
                     app.duck.target_x = random.uniform(0, width - app.duck.width)
                     anim_height = (height * 3) // 4
-                    app.duck.target_y = random.uniform(anim_height // 2 - 2, anim_height - app.duck.height)
+                    # Duck is 4 rows high. anim_height // 2 is water line.
+                    # We want at least the bottom 2 rows (index 2, 3) in water.
+                    # So y + 2 >= anim_height // 2  => y >= anim_height // 2 - 2
+                    min_y = anim_height // 2 - 2
+                    max_y = anim_height - app.duck.height
+                    app.duck.target_y = random.uniform(min_y, max_y)
+
 
                 # Update animation and logic
                 app.update(width, height)

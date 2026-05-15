@@ -6,7 +6,7 @@ class App:
         self.messages: List[Tuple[str, str]] = [("Duck", "Quack! Welcome to asciiquack!")]
         self.input_buffer: str = ""
         self.running: bool = True
-        self.duck = Duck(10, 5)
+        self.duck = Duck(10, 15)  # Start deeper to avoid "flying"
         self.color: str = "yellow"
         self.colors = ["yellow", "cyan", "magenta", "green", "red", "white"]
         self.hats = ["None", "Top Hat", "Cap", "Flower"]
