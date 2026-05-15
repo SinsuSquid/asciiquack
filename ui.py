@@ -65,43 +65,28 @@ def draw_duck(app: App, width: int, height: int) -> str:
         color = water_color if is_water else COLORS["yellow"]
         
         row_str = ""
-        
+        duck_row = None
         if y <= row_idx < y + len(duck_art):
             duck_row = duck_art[row_idx - y]
+        
+        for col_idx in range(width):
+            # Background character
+            if (col_idx, row_idx) in crumbs:
+                bg_char = "."
+            elif is_water:
+                bg_char = wave_chars[(col_idx + app.duck.tick) // 5 % len(wave_chars)]
+            else:
+                bg_char = " "
             
-            # Actual display width of the duck row
-            display_width = len(duck_row) + (hat_width_bonus if row_idx == y and app.hat == "Flower" else 0)
-            
-            display_x = max(0, x)
-            # Clip if needed (simplified)
-            if display_x + display_width > width:
-                duck_row = duck_row[:width - display_x - hat_width_bonus]
-            
-            # Fill before duck
-            prefix = []
-            for col_idx in range(display_x):
-                if (col_idx, row_idx) in crumbs: prefix.append(".")
-                elif is_water: prefix.append(wave_chars[(col_idx + app.duck.tick) // 5 % len(wave_chars)])
-                else: prefix.append(" ")
-            
-            row_str += color + "".join(prefix) + RESET_COLOR
-            row_str += duck_color + duck_row + RESET_COLOR
-            
-            # Fill after duck
-            suffix_start = display_x + display_width
-            suffix = []
-            for col_idx in range(suffix_start, width):
-                if (col_idx, row_idx) in crumbs: suffix.append(".")
-                elif is_water: suffix.append(wave_chars[(col_idx + app.duck.tick) // 5 % len(wave_chars)])
-                else: suffix.append(" ")
-            row_str += color + "".join(suffix) + RESET_COLOR
-        else:
-            row = []
-            for col_idx in range(width):
-                if (col_idx, row_idx) in crumbs: row.append(".")
-                elif is_water: row.append(wave_chars[(col_idx + app.duck.tick) // 5 % len(wave_chars)])
-                else: row.append(" ")
-            row_str += color + "".join(row) + RESET_COLOR
+            # Duck character?
+            if duck_row is not None and x <= col_idx < x + len(duck_row):
+                duck_char = duck_row[col_idx - x]
+                if duck_char != " ":
+                    row_str += duck_color + duck_char + RESET_COLOR
+                else:
+                    row_str += color + bg_char + RESET_COLOR
+            else:
+                row_str += color + bg_char + RESET_COLOR
         
         frame_lines.append(row_str)
 
