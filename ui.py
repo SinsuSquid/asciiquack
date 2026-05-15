@@ -1,25 +1,24 @@
-from rich.layout import Layout
-from rich.panel import Panel
-from rich.text import Text
-from rich.console import Console, Group
+import math
 from app import App
 
-def make_layout() -> Layout:
-    layout = Layout()
-    layout.split_column(
-        Layout(name="upper", ratio=3),
-        Layout(name="lower", ratio=1)
-    )
-    layout["upper"].split_row(
-        Layout(name="animation", ratio=2),
-        Layout(name="chat", ratio=1)
-    )
-    layout["lower"].split_column(
-        Layout(name="input")
-    )
-    return layout
+# ANSI Escape Sequences
+CLEAR_SCREEN = "\033[2J"
+CURSOR_HOME = "\033[H"
+HIDE_CURSOR = "\033[?25l"
+SHOW_CURSOR = "\033[?25h"
+RESET_COLOR = "\033[0m"
 
-def draw_duck(app: App, width: int, height: int) -> Text:
+COLORS = {
+    "yellow": "\033[33m",
+    "cyan": "\033[36m",
+    "magenta": "\033[35m",
+    "green": "\033[32m",
+    "red": "\033[31m",
+    "white": "\033[37m",
+    "bold": "\033[1m",
+}
+
+def draw_duck(app: App, width: int, height: int) -> str:
     duck_art = app.duck.get_art().copy()
     
     # Add hat if any
@@ -32,52 +31,54 @@ def draw_duck(app: App, width: int, height: int) -> Text:
         duck_art.insert(0, "       🌸")
 
     x = int(app.duck.x)
-    # Duck floats on the waves, so we bob its Y based on time
-    import math
     bob = math.sin(app.duck.tick * 0.2)
     y = int(app.duck.y + bob)
     
-    # Adjust y for hat height
     hat_height = len(duck_art) - 4
     y = max(0, y - hat_height)
     
-    text = Text()
     crumbs = set(app.breadcrumbs)
-
-    # We'll fill the bottom of the pane with "waves"
     wave_chars = ["~", "≈", "∽"]
     
-    for row_idx in range(height):
-        # Is this a "water" row? (Bottom half)
-        is_water = row_idx >= (height // 2)
+    duck_color = COLORS.get(app.color, COLORS["yellow"])
+    water_color = COLORS["cyan"]
+    
+    frame_lines = []
+    
+    # Layout Split: Animation (2/3 height), Chat/Input (1/3 height)
+    anim_height = (height * 3) // 4
+    
+    for row_idx in range(anim_height):
+        is_water = row_idx >= (anim_height // 2)
+        color = water_color if is_water else COLORS["yellow"]
         
-        # If the duck is on this row, overlay it
+        row_str = ""
+        
         if y <= row_idx < y + len(duck_art):
             duck_row = duck_art[row_idx - y]
             
-            # Clipping
+            # Clipping/Positioning
+            display_x = max(0, x)
             if x < 0:
                 duck_row = duck_row[-x:]
-                display_x = 0
-            else:
-                display_x = x
             if display_x + len(duck_row) > width:
                 duck_row = duck_row[:width - display_x]
             
-            row_chars = []
+            # Prefix (background/water/crumbs)
+            prefix_chars = []
             for col_idx in range(display_x):
                 if (col_idx, row_idx) in crumbs:
-                    row_chars.append(".")
+                    prefix_chars.append(".")
                 elif is_water:
                     phase = (col_idx + app.duck.tick) // 5
-                    row_chars.append(wave_chars[phase % len(wave_chars)])
+                    prefix_chars.append(wave_chars[phase % len(wave_chars)])
                 else:
-                    row_chars.append(" ")
+                    prefix_chars.append(" ")
             
-            prefix = "".join(row_chars)
-            text.append(prefix, style="cyan" if is_water else "yellow")
-            text.append(duck_row, style=app.color)
+            row_str += color + "".join(prefix_chars) + RESET_COLOR
+            row_str += duck_color + duck_row + RESET_COLOR
             
+            # Suffix
             suffix_start = display_x + len(duck_row)
             suffix_chars = []
             for col_idx in range(suffix_start, width):
@@ -88,7 +89,7 @@ def draw_duck(app: App, width: int, height: int) -> Text:
                     suffix_chars.append(wave_chars[phase % len(wave_chars)])
                 else:
                     suffix_chars.append(" ")
-            text.append("".join(suffix_chars) + "\n", style="cyan" if is_water else "yellow")
+            row_str += color + "".join(suffix_chars) + RESET_COLOR
         else:
             row_chars = []
             for col_idx in range(width):
@@ -99,28 +100,37 @@ def draw_duck(app: App, width: int, height: int) -> Text:
                     row_chars.append(wave_chars[phase % len(wave_chars)])
                 else:
                     row_chars.append(" ")
-            text.append("".join(row_chars) + "\n", style="cyan" if is_water else "yellow")
-    return text
+            row_str += color + "".join(row_chars) + RESET_COLOR
+        
+        frame_lines.append(row_str)
 
-def update_layout(layout: Layout, app: App, width: int, height: int):
-    # Animation area
-    layout["animation"].update(
-        Panel(draw_duck(app, width, height), title="Quack View", border_style="blue")
-    )
-    
     # Chat area
-    chat_content = Text()
-    for sender, msg in app.messages:
-        style = "bold yellow" if sender == "Duck" else "bold green"
-        chat_content.append(f"{sender}: ", style=style)
-        chat_content.append(f"{msg}\n", style="white")
+    chat_height = height - anim_height - 2 # -2 for input box
+    frame_lines.append(COLORS["magenta"] + "─" * width + RESET_COLOR)
     
-    layout["chat"].update(
-        Panel(chat_content, title="Duck Chat", border_style="magenta")
-    )
-    
+    recent_msgs = app.messages[-chat_height:]
+    for i in range(chat_height):
+        if i < len(recent_msgs):
+            sender, msg = recent_msgs[i]
+            s_color = COLORS["yellow"] if sender == "Duck" else COLORS["green"]
+            line = f"{COLORS['bold']}{s_color}{sender}:{RESET_COLOR} {msg}"
+            # Truncate if too long
+            frame_lines.append(line[:width + 10]) # +10 for ANSI codes
+        else:
+            frame_lines.append("")
+
     # Input area
     footer = " (ESC: Quit | TAB: Color | H: Hat | F: Feed)"
-    layout["input"].update(
-        Panel(Text(app.input_buffer + "█", style="white"), title="Talk to Duck" + footer, border_style="green")
-    )
+    frame_lines.append(COLORS["green"] + "─" * width + RESET_COLOR)
+    input_line = f"{COLORS['white']}Talk to Duck{footer}: {app.input_buffer}█"
+    frame_lines.append(input_line[:width + 20])
+
+    return "\n".join(frame_lines)
+
+def render_frame(app: App, width: int, height: int):
+    frame = draw_duck(app, width, height)
+    # Move cursor to home and print the entire frame at once
+    sys.stdout.write(CURSOR_HOME + frame)
+    sys.stdout.flush()
+
+import sys

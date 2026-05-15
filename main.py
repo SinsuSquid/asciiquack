@@ -3,11 +3,11 @@ import time
 import tty
 import termios
 import select
+import os
+import random
 from contextlib import contextmanager
-from rich.live import Live
-from rich.console import Console
 from app import App
-from ui import make_layout, update_layout
+from ui import render_frame, CLEAR_SCREEN, HIDE_CURSOR, SHOW_CURSOR, CURSOR_HOME
 
 @contextmanager
 def raw_mode(file):
@@ -25,37 +25,28 @@ def get_char_non_blocking():
 
 def main():
     app = App()
-    layout = make_layout()
-    console = Console()
-    import random
+    
+    # Initial setup
+    sys.stdout.write(CLEAR_SCREEN + HIDE_CURSOR + CURSOR_HOME)
+    sys.stdout.flush()
 
-    with raw_mode(sys.stdin):
-        with Live(layout, refresh_per_second=20, screen=True, console=console) as live:
+    try:
+        with raw_mode(sys.stdin):
             while app.running:
-                # Get actual dimensions of the 'animation' pane
-                try:
-                    region_map = layout.map(console)
-                    animation_pane = layout["animation"]
-                    region = region_map[animation_pane]
-                    width = region.width - 2
-                    height = region.height - 2
-                except Exception:
-                    width = (console.width * 2) // 3 - 2
-                    height = (console.height * 3) // 4 - 2
+                # Get terminal size
+                size = os.get_terminal_size()
+                width, height = size.columns, size.lines
 
-                width = max(1, width)
-                height = max(1, height)
-
-                # Randomly change target to simulate "swimming around"
+                # Randomly change target
                 if random.random() < 0.01:
                     app.duck.target_x = random.uniform(0, width - app.duck.width)
-                    # Stay roughly in the water area (bottom half)
-                    app.duck.target_y = random.uniform(height // 2 - 2, height - app.duck.height)
+                    anim_height = (height * 3) // 4
+                    app.duck.target_y = random.uniform(anim_height // 2 - 2, anim_height - app.duck.height)
 
                 # Update animation
                 app.duck.update(width, height)
 
-                # Handle input (collect all available chars to keep it responsive)
+                # Handle input
                 while True:
                     char = get_char_non_blocking()
                     if char is None:
@@ -67,11 +58,13 @@ def main():
                         app.handle_input(char)
                 
                 # Update UI
-                update_layout(layout, app, width, height)
+                render_frame(app, width, height)
                 
-                # Small sleep to prevent 100% CPU, but much smaller than before
-                # to stay responsive and smooth.
-                time.sleep(0.01)
+                time.sleep(0.05)
+    finally:
+        # Cleanup
+        sys.stdout.write(SHOW_CURSOR + "\n")
+        sys.stdout.flush()
 
 if __name__ == "__main__":
     main()
