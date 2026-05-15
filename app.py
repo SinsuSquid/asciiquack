@@ -11,6 +11,8 @@ class App:
         self.colors = ["yellow", "cyan", "magenta", "green", "red", "white"]
         self.hats = ["None", "Top Hat", "Cap", "Flower"]
         self.hat_idx = 0
+        self.hat = "None"
+        self.breadcrumbs: List[Tuple[int, int]] = []
 
     def cycle_hat(self):
         self.hat_idx = (self.hat_idx + 1) % len(self.hats)
