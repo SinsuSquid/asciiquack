@@ -11,6 +11,7 @@ ALT_SCREEN_ON = "\033[?1049h"
 ALT_SCREEN_OFF = "\033[?1049l"
 DISABLE_WRAP = "\033[7l"
 ENABLE_WRAP = "\033[7h"
+CLEAR_LINE = "\033[K"
 
 def move_to(row: int, col: int) -> str:
     return f"\033[{row};{col}H"
@@ -146,8 +147,8 @@ def render_frame(app: App, width: int, height: int):
     lines = draw_duck(app, width, height)
     output = []
     for i, line in enumerate(lines):
-        # Move to exactly row i+1, column 1 and print the line
-        output.append(move_to(i + 1, 1) + line)
+        # Move to exactly row i+1, column 1, print line, then clear rest of line
+        output.append(move_to(i + 1, 1) + line + CLEAR_LINE)
     
     # Calculate cursor position at the end of the input line
     # The input line is the last line in our list
