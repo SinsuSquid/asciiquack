@@ -2,6 +2,15 @@
 
 A lightweight, zero-dependency terminal rubber-duck for debugging, drifting, and dreaming.
 
+```
+      __
+    <(o·)___  ~  ≈  ∽  ~  ≈
+     (·._>·/  ≈  ∽  ~  ≈  ∽
+      `---'   ∽  ~  ≈  ∽  ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Talk to Duck (ESC: Q | TAB: C | H: H | F: F): _
+```
+
 Inspired by the classic `asciiaquarium`, **asciiquack** brings a peaceful, floating rubber duckie right into your terminal. No heavy libraries, no complex setups—just pure Python and raw ANSI escape codes.
 
 ---
