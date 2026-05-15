@@ -81,7 +81,11 @@ def draw_duck(app: App, width: int, height: int) -> str:
             # Duck character?
             if duck_row is not None and x <= col_idx < x + len(duck_row):
                 duck_char = duck_row[col_idx - x]
-                if duck_char != " ":
+                # If it's our solid-space placeholder, turn it into a real space!
+                if duck_char == "·":
+                    row_str += duck_color + " " + RESET_COLOR
+                # Only real spaces from the art box are transparent!
+                elif duck_char != " ":
                     row_str += duck_color + duck_char + RESET_COLOR
                 else:
                     row_str += color + bg_char + RESET_COLOR
