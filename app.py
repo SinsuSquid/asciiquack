@@ -38,6 +38,31 @@ class App:
         if len(self.messages) > 20:
             self.messages.pop(0)
 
+    def update(self, width: int, height: int):
+        # Update animation
+        self.duck.update(width, height)
+        
+        # Check for eaten breadcrumbs
+        # A breadcrumb is eaten if it's within the duck's body
+        dx = int(self.duck.x)
+        dy = int(self.duck.y)
+        
+        # We'll use a slightly smaller hitbox for "eating" to make it look natural
+        hitbox_width = self.duck.width
+        hitbox_height = self.duck.height
+        
+        remaining_crumbs = []
+        eaten_some = False
+        for bx, by in self.breadcrumbs:
+            if dx <= bx < dx + hitbox_width and dy <= by < dy + hitbox_height:
+                eaten_some = True
+                continue
+            remaining_crumbs.append((bx, by))
+        
+        self.breadcrumbs = remaining_crumbs
+        if eaten_some:
+            self.process_quack("munch munch!")
+
     def handle_input(self, char: str):
         if char == "\t":  # TAB
             self.cycle_color()

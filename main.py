@@ -43,8 +43,8 @@ def main():
                     anim_height = (height * 3) // 4
                     app.duck.target_y = random.uniform(anim_height // 2 - 2, anim_height - app.duck.height)
 
-                # Update animation
-                app.duck.update(width, height)
+                # Update animation and logic
+                app.update(width, height)
 
                 # Handle input
                 while True:
