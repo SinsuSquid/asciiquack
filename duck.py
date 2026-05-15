@@ -30,23 +30,31 @@ class Duck:
         self.x += self.vx
         self.y += self.vy
 
+        # Ensure bounds are at least duck size to avoid vibrating/clipping
+        effective_width = max(self.width, bounds_width)
+        effective_height = max(self.height, bounds_height)
+
         # Bounce X
         if self.x <= 0:
             self.x = 0
-            self.vx *= -1
+            self.vx = abs(self.vx)
             self.facing_right = True
         elif self.x + self.width >= bounds_width:
             self.x = bounds_width - self.width
-            self.vx *= -1
+            self.vx = -abs(self.vx)
             self.facing_right = False
 
         # Bounce Y
         if self.y <= 0:
             self.y = 0
-            self.vy *= -1
+            self.vy = abs(self.vy)
         elif self.y + self.height >= bounds_height:
             self.y = bounds_height - self.height
-            self.vy *= -1
+            self.vy = -abs(self.vy)
+
+        # Hard clamp for window resizes
+        self.x = max(0, min(self.x, bounds_width - self.width))
+        self.y = max(0, min(self.y, bounds_height - self.height))
 
     def get_art(self) -> List[str]:
         return self.ART_RIGHT if self.facing_right else self.ART_LEFT

@@ -31,9 +31,22 @@ def main():
     with raw_mode(sys.stdin):
         with Live(layout, refresh_per_second=20, screen=True, console=console) as live:
             while app.running:
-                # Estimate bounds (animation is 2/3 width, 3/4 height)
-                width = (console.width * 2) // 3 - 2 # -2 for borders
-                height = (console.height * 3) // 4 - 2
+                # Get actual dimensions of the 'animation' pane
+                try:
+                    # Map the layout to the console to get regions
+                    region_map = layout.map(console)
+                    animation_pane = layout["animation"]
+                    region = region_map[animation_pane]
+                    width = region.width - 2  # Subtract borders
+                    height = region.height - 2
+                except Exception:
+                    # Fallback to estimation if map is not ready
+                    width = (console.width * 2) // 3 - 2
+                    height = (console.height * 3) // 4 - 2
+
+                # Ensure width/height are at least 1
+                width = max(1, width)
+                height = max(1, height)
 
                 # Update animation
                 app.duck.update(width, height)

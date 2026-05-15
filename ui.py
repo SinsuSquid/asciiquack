@@ -50,12 +50,19 @@ def draw_duck(app: App, width: int, height: int) -> Text:
         if y <= row_idx < y + len(duck_art):
             duck_row = duck_art[row_idx - y]
             
+            # Ensure the duck is clipped to the width
+            if x < 0:
+                duck_row = duck_row[-x:]
+                display_x = 0
+            else:
+                display_x = x
+            
+            if display_x + len(duck_row) > width:
+                duck_row = duck_row[:width - display_x]
+            
             # Draw row with crumbs and duck overlay
             row_chars = []
-            for col_idx in range(width):
-                if x <= col_idx < x + len(duck_row):
-                    # We'll append the duck after this loop for styling
-                    break
+            for col_idx in range(display_x):
                 if (col_idx, row_idx) in crumbs:
                     row_chars.append(".")
                 else:
@@ -66,7 +73,7 @@ def draw_duck(app: App, width: int, height: int) -> Text:
             text.append(duck_row, style=app.color)
             
             # Remaining suffix
-            suffix_start = x + len(duck_row)
+            suffix_start = display_x + len(duck_row)
             suffix_chars = []
             for col_idx in range(suffix_start, width):
                 if (col_idx, row_idx) in crumbs:
