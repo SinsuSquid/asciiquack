@@ -7,6 +7,8 @@ CURSOR_HOME = "\033[H"
 HIDE_CURSOR = "\033[?25l"
 SHOW_CURSOR = "\033[?25h"
 RESET_COLOR = "\033[0m"
+ALT_SCREEN_ON = "\033[?1049h"
+ALT_SCREEN_OFF = "\033[?1049l"
 
 COLORS = {
     "yellow": "\033[33m",
@@ -22,6 +24,7 @@ def draw_duck(app: App, width: int, height: int) -> str:
     duck_art = app.duck.get_art().copy()
     
     # Add hat if any
+    hat_width_bonus = 0
     if app.hat == "Top Hat":
         duck_art.insert(0, "      _|_")
         duck_art.insert(1, "     |___|")
@@ -29,6 +32,8 @@ def draw_duck(app: App, width: int, height: int) -> str:
         duck_art.insert(0, "      ___/")
     elif app.hat == "Flower":
         duck_art.insert(0, "       🌸")
+        # 🌸 is a wide char (2 columns), but len() is 1. We need to account for it!
+        hat_width_bonus = 1
 
     x = int(app.duck.x)
     bob = math.sin(app.duck.tick * 0.2)
@@ -45,7 +50,8 @@ def draw_duck(app: App, width: int, height: int) -> str:
     
     frame_lines = []
     
-    # Layout Split: Animation (2/3 height), Chat/Input (1/3 height)
+    # Use height - 1 to be absolutely safe
+    height = height - 1
     anim_height = (height * 3) // 4
     
     for row_idx in range(anim_height):
@@ -57,50 +63,39 @@ def draw_duck(app: App, width: int, height: int) -> str:
         if y <= row_idx < y + len(duck_art):
             duck_row = duck_art[row_idx - y]
             
-            # Clipping/Positioning
+            # Actual display width of the duck row
+            display_width = len(duck_row) + (hat_width_bonus if row_idx == y and app.hat == "Flower" else 0)
+            
             display_x = max(0, x)
-            if x < 0:
-                duck_row = duck_row[-x:]
-            if display_x + len(duck_row) > width:
-                duck_row = duck_row[:width - display_x]
+            # Clip if needed (simplified)
+            if display_x + display_width > width:
+                duck_row = duck_row[:width - display_x - hat_width_bonus]
             
-            # Prefix (background/water/crumbs)
-            prefix_chars = []
+            # Fill before duck
+            prefix = []
             for col_idx in range(display_x):
-                if (col_idx, row_idx) in crumbs:
-                    prefix_chars.append(".")
-                elif is_water:
-                    phase = (col_idx + app.duck.tick) // 5
-                    prefix_chars.append(wave_chars[phase % len(wave_chars)])
-                else:
-                    prefix_chars.append(" ")
+                if (col_idx, row_idx) in crumbs: prefix.append(".")
+                elif is_water: prefix.append(wave_chars[(col_idx + app.duck.tick) // 5 % len(wave_chars)])
+                else: prefix.append(" ")
             
-            row_str += color + "".join(prefix_chars) + RESET_COLOR
+            row_str += color + "".join(prefix) + RESET_COLOR
             row_str += duck_color + duck_row + RESET_COLOR
             
-            # Suffix
-            suffix_start = display_x + len(duck_row)
-            suffix_chars = []
+            # Fill after duck
+            suffix_start = display_x + display_width
+            suffix = []
             for col_idx in range(suffix_start, width):
-                if (col_idx, row_idx) in crumbs:
-                    suffix_chars.append(".")
-                elif is_water:
-                    phase = (col_idx + app.duck.tick) // 5
-                    suffix_chars.append(wave_chars[phase % len(wave_chars)])
-                else:
-                    suffix_chars.append(" ")
-            row_str += color + "".join(suffix_chars) + RESET_COLOR
+                if (col_idx, row_idx) in crumbs: suffix.append(".")
+                elif is_water: suffix.append(wave_chars[(col_idx + app.duck.tick) // 5 % len(wave_chars)])
+                else: suffix.append(" ")
+            row_str += color + "".join(suffix) + RESET_COLOR
         else:
-            row_chars = []
+            row = []
             for col_idx in range(width):
-                if (col_idx, row_idx) in crumbs:
-                    row_chars.append(".")
-                elif is_water:
-                    phase = (col_idx + app.duck.tick) // 5
-                    row_chars.append(wave_chars[phase % len(wave_chars)])
-                else:
-                    row_chars.append(" ")
-            row_str += color + "".join(row_chars) + RESET_COLOR
+                if (col_idx, row_idx) in crumbs: row.append(".")
+                elif is_water: row.append(wave_chars[(col_idx + app.duck.tick) // 5 % len(wave_chars)])
+                else: row.append(" ")
+            row_str += color + "".join(row) + RESET_COLOR
         
         frame_lines.append(row_str)
 
