@@ -105,32 +105,40 @@ def draw_duck(app: App, width: int, height: int) -> str:
         frame_lines.append(row_str)
 
     # Chat area
-    chat_height = height - anim_height - 3 # Adjusted to fit exactly
+    # Chat area
+    # Subtracting 4: 2 for borders, 1 for input, 1 to avoid the very last terminal line
+    chat_height = height - anim_height - 4
     if chat_height < 1:
-        anim_height += chat_height - 1
+        anim_height = max(1, height - 5)
         chat_height = 1
-    
+
     frame_lines.append(COLORS["magenta"] + "─" * width + RESET_COLOR)
-    
+
     recent_msgs = app.messages[-chat_height:]
     for i in range(chat_height):
         if i < len(recent_msgs):
             sender, msg = recent_msgs[i]
             s_color = COLORS["yellow"] if sender == "Duck" else COLORS["green"]
-            line = f"{COLORS['bold']}{s_color}{sender}:{RESET_COLOR} {msg}"
-            # Don't truncate with slice because of ANSI codes, just let it wrap or handle later
+            # Basic truncation for chat messages (approximate due to ANSI)
+            clean_msg = msg[:width - 10]
+            line = f"{COLORS['bold']}{s_color}{sender}:{RESET_COLOR} {clean_msg}"
             frame_lines.append(line)
         else:
             frame_lines.append("")
 
     # Input area
-    footer = " (ESC: Quit | TAB: Color | H: Hat | F: Feed)"
+    footer = " (ESC: Q | TAB: C | H: H | F: F)"
     frame_lines.append(COLORS["green"] + "─" * width + RESET_COLOR)
-    input_line = f"{COLORS['white']}Talk to Duck{footer}: {app.input_buffer}█"
+
+    # Truncate input to avoid wrapping
+    max_input = width - len("Talk to Duck: ") - len(footer) - 2
+    display_input = app.input_buffer[-max_input:] if len(app.input_buffer) > max_input else app.input_buffer
+    input_line = f"{COLORS['white']}Talk to Duck{footer}: {display_input}█"
     frame_lines.append(input_line)
 
-    # Ensure we don't exceed the terminal height
-    return "\n".join(frame_lines[:height])
+    # Return exactly height-1 lines to avoid triggering a scroll
+    return "\n".join(frame_lines[:height-1])
+
 
 def render_frame(app: App, width: int, height: int):
     frame = draw_duck(app, width, height)
