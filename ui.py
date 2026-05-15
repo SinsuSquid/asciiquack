@@ -105,7 +105,11 @@ def draw_duck(app: App, width: int, height: int) -> str:
         frame_lines.append(row_str)
 
     # Chat area
-    chat_height = height - anim_height - 2 # -2 for input box
+    chat_height = height - anim_height - 3 # Adjusted to fit exactly
+    if chat_height < 1:
+        anim_height += chat_height - 1
+        chat_height = 1
+    
     frame_lines.append(COLORS["magenta"] + "─" * width + RESET_COLOR)
     
     recent_msgs = app.messages[-chat_height:]
@@ -114,8 +118,8 @@ def draw_duck(app: App, width: int, height: int) -> str:
             sender, msg = recent_msgs[i]
             s_color = COLORS["yellow"] if sender == "Duck" else COLORS["green"]
             line = f"{COLORS['bold']}{s_color}{sender}:{RESET_COLOR} {msg}"
-            # Truncate if too long
-            frame_lines.append(line[:width + 10]) # +10 for ANSI codes
+            # Don't truncate with slice because of ANSI codes, just let it wrap or handle later
+            frame_lines.append(line)
         else:
             frame_lines.append("")
 
@@ -123,9 +127,10 @@ def draw_duck(app: App, width: int, height: int) -> str:
     footer = " (ESC: Quit | TAB: Color | H: Hat | F: Feed)"
     frame_lines.append(COLORS["green"] + "─" * width + RESET_COLOR)
     input_line = f"{COLORS['white']}Talk to Duck{footer}: {app.input_buffer}█"
-    frame_lines.append(input_line[:width + 20])
+    frame_lines.append(input_line)
 
-    return "\n".join(frame_lines)
+    # Ensure we don't exceed the terminal height
+    return "\n".join(frame_lines[:height])
 
 def render_frame(app: App, width: int, height: int):
     frame = draw_duck(app, width, height)

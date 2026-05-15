@@ -60,7 +60,8 @@ def main():
                 # Update UI
                 render_frame(app, width, height)
                 
-                time.sleep(0.05)
+                # Use a slightly more precise sleep
+                time.sleep(0.04)
     finally:
         # Cleanup
         sys.stdout.write(SHOW_CURSOR + "\n")
