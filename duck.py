@@ -1,7 +1,7 @@
+import math
 from typing import List
 
 class Duck:
-    # Right-facing duck
     ART_RIGHT = [
         "      __",
         "    <(o )___",
@@ -9,7 +9,6 @@ class Duck:
         "      `---'"
     ]
     
-    # Left-facing duck
     ART_LEFT = [
         "      __",
         "   ___( o)>",
@@ -20,39 +19,33 @@ class Duck:
     def __init__(self, x: int, y: int):
         self.x = float(x)
         self.y = float(y)
-        self.vx = 0.5
-        self.vy = 0.2
+        self.target_x = float(x)
+        self.target_y = float(y)
         self.width = 12
         self.height = 4
         self.facing_right = True
+        self.tick = 0
 
     def update(self, bounds_width: int, bounds_height: int):
-        self.x += self.vx
-        self.y += self.vy
+        self.tick += 1
+        
+        # Gentle floating bobbing effect
+        bob_y = math.sin(self.tick * 0.1) * 0.5
+        
+        # Drift slowly towards target
+        dx = (self.target_x - self.x) * 0.05
+        dy = (self.target_y - self.y) * 0.05
+        
+        self.x += dx
+        self.y += dy + (bob_y * 0.1) # Add a tiny bit of bob to the actual pos
 
-        # Ensure bounds are at least duck size to avoid vibrating/clipping
-        effective_width = max(self.width, bounds_width)
-        effective_height = max(self.height, bounds_height)
-
-        # Bounce X
-        if self.x <= 0:
-            self.x = 0
-            self.vx = abs(self.vx)
+        # Ensure facing direction matches movement
+        if dx > 0.01:
             self.facing_right = True
-        elif self.x + self.width >= bounds_width:
-            self.x = bounds_width - self.width
-            self.vx = -abs(self.vx)
+        elif dx < -0.01:
             self.facing_right = False
 
-        # Bounce Y
-        if self.y <= 0:
-            self.y = 0
-            self.vy = abs(self.vy)
-        elif self.y + self.height >= bounds_height:
-            self.y = bounds_height - self.height
-            self.vy = -abs(self.vy)
-
-        # Hard clamp for window resizes
+        # Keep duck within logical bounds but don't "bounce"
         self.x = max(0, min(self.x, bounds_width - self.width))
         self.y = max(0, min(self.y, bounds_height - self.height))
 

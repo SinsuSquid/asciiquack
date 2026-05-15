@@ -27,26 +27,30 @@ def main():
     app = App()
     layout = make_layout()
     console = Console()
+    import random
 
     with raw_mode(sys.stdin):
         with Live(layout, refresh_per_second=20, screen=True, console=console) as live:
             while app.running:
                 # Get actual dimensions of the 'animation' pane
                 try:
-                    # Map the layout to the console to get regions
                     region_map = layout.map(console)
                     animation_pane = layout["animation"]
                     region = region_map[animation_pane]
-                    width = region.width - 2  # Subtract borders
+                    width = region.width - 2
                     height = region.height - 2
                 except Exception:
-                    # Fallback to estimation if map is not ready
                     width = (console.width * 2) // 3 - 2
                     height = (console.height * 3) // 4 - 2
 
-                # Ensure width/height are at least 1
                 width = max(1, width)
                 height = max(1, height)
+
+                # Randomly change target to simulate "swimming around"
+                if random.random() < 0.01:
+                    app.duck.target_x = random.uniform(0, width - app.duck.width)
+                    # Stay roughly in the water area (bottom half)
+                    app.duck.target_y = random.uniform(height // 2 - 2, height - app.duck.height)
 
                 # Update animation
                 app.duck.update(width, height)
