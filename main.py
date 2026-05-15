@@ -7,7 +7,7 @@ import os
 import random
 from contextlib import contextmanager
 from app import App
-from ui import render_frame, CLEAR_SCREEN, HIDE_CURSOR, SHOW_CURSOR, CURSOR_HOME, ALT_SCREEN_ON, ALT_SCREEN_OFF
+from ui import render_frame, CLEAR_SCREEN, HIDE_CURSOR, SHOW_CURSOR, CURSOR_HOME, ALT_SCREEN_ON, ALT_SCREEN_OFF, DISABLE_WRAP, ENABLE_WRAP
 
 @contextmanager
 def raw_mode(file):
@@ -26,8 +26,8 @@ def get_char_non_blocking():
 def main():
     app = App()
     
-    # Initial setup: Use Alternate Screen Buffer for total stability!
-    sys.stdout.write(ALT_SCREEN_ON + CLEAR_SCREEN + HIDE_CURSOR + CURSOR_HOME)
+    # Initial setup: Use Alternate Screen, Hide Cursor, Disable Wrap, and Clear!
+    sys.stdout.write(ALT_SCREEN_ON + HIDE_CURSOR + DISABLE_WRAP + CLEAR_SCREEN + CURSOR_HOME)
     sys.stdout.flush()
 
     try:
@@ -63,8 +63,8 @@ def main():
                 # Use a slightly more precise sleep
                 time.sleep(0.04)
     finally:
-        # Cleanup: Exit alternate screen
-        sys.stdout.write(ALT_SCREEN_OFF + SHOW_CURSOR)
+        # Cleanup: Re-enable wrap, show cursor, exit alternate screen
+        sys.stdout.write(ENABLE_WRAP + SHOW_CURSOR + ALT_SCREEN_OFF)
         sys.stdout.flush()
 
 if __name__ == "__main__":

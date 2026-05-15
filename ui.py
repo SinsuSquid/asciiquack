@@ -9,6 +9,11 @@ SHOW_CURSOR = "\033[?25h"
 RESET_COLOR = "\033[0m"
 ALT_SCREEN_ON = "\033[?1049h"
 ALT_SCREEN_OFF = "\033[?1049l"
+DISABLE_WRAP = "\033[7l"
+ENABLE_WRAP = "\033[7h"
+
+def move_to(row: int, col: int) -> str:
+    return f"\033[{row};{col}H"
 
 COLORS = {
     "yellow": "\033[33m",
@@ -132,13 +137,16 @@ def draw_duck(app: App, width: int, height: int) -> str:
     frame_lines.append(input_line)
 
     # Return exactly height-1 lines to avoid triggering a scroll
-    return "\n".join(frame_lines[:height-1])
-
+    return frame_lines[:height-1]
 
 def render_frame(app: App, width: int, height: int):
-    frame = draw_duck(app, width, height)
-    # Move cursor to home and print the entire frame at once
-    sys.stdout.write(CURSOR_HOME + frame)
+    lines = draw_duck(app, width, height)
+    output = []
+    for i, line in enumerate(lines):
+        # Move to exactly row i+1, column 1 and print the line
+        output.append(move_to(i + 1, 1) + line)
+    
+    sys.stdout.write("".join(output))
     sys.stdout.flush()
 
 import sys
