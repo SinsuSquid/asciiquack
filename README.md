@@ -3,13 +3,17 @@
 A lightweight, zero-dependency terminal rubber-animal for debugging, drifting, and dreaming.
 
 ```
-         \ | /
-       .-'---'-.
-      /         \   ~  ≈  ∽  ~  ≈
-     |   O u O   |  ≈  ∽  ~  ≈  ∽
-      \         /   ∽  ~  ≈  ∽  ~
-       '-.---.-'
-         / | \
+      \ | /
+    .-'---'-.
+ --(   O u O   )--      .--.
+    '-.---.-'        .-(    ).
+      / | \         (         )
+                     `-------'
+
+      (o)(o)
+     (  u   )   ~  ≈  ∽  ~  ≈
+    (        )  ≈  ∽  ~  ≈  ∽
+     `------'   ∽  ~  ≈  ∽  ~
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Talk to Frog (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal): _
 ```
@@ -24,6 +28,8 @@ Inspired by the classic `asciiaquarium`, this app brings a peaceful, floating ru
 - **💬 Rubber Animal Debugging:** Talk to your companion! It listens to your debugging woes and responds with wisdom.
 - **🦆🐸 Multiple Species:** Switch between a cute Duck and a round Frog at any time!
 - **🐸 Froggy Mode (For JY):** A special, extra-cute chibi frog mode for when you need that extra bit of luck and cuteness.
+- **☀️ Smiling Sun:** A happy, winking sun that watches over the pond.
+- **☁️ Flowing Clouds:** Cartoon-style clouds that drift gently across the sky.
 - **📺 Fullscreen Stability:** Uses the Alternate Screen Buffer to ensure a flicker-free, stable experience.
 - **🎨 Customization:** Change colors or give your friend some style with different hats!
 - **🥨 Feeding Time:** Press a key to drop some breadcrumbs and watch your friend munch away.
