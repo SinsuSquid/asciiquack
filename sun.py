@@ -1,14 +1,12 @@
 from typing import List
 
 class Sun:
-    # The Ultimate Cartoon Sun: Large, round, and extra cute!
-    # '·' is used for solid color fill in ui.py
+    # A balanced, high-quality cartoon sun
+    # '·' is used for solid-fill placeholder logic in ui.py
     FRAME_A = [
         "      \\ | /      ",
         "    .-'---'-.    ",
-        "   /·········\\   ",
-        "  |···O·u·O···|  ",
-        "   \\·········/   ",
+        " --(··O·u·O··)-- ",
         "    '-.---.-'    ",
         "      / | \\      "
     ]
@@ -16,9 +14,7 @@ class Sun:
     FRAME_B = [
         "      \\ | /      ",
         "    .-'---'-.    ",
-        "   /·········\\   ",
-        "  |···-·u·O···|  ",
-        "   \\·········/   ",
+        " --(··-·u·O··)-- ",
         "    '-.---.-'    ",
         "      / | \\      "
     ]
@@ -28,7 +24,7 @@ class Sun:
         self.y = y
         self.tick = 0
         self.width = 17
-        self.height = 7
+        self.height = 5
 
     def update(self):
         self.tick += 1

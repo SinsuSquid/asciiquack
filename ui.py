@@ -26,9 +26,6 @@ COLORS = {
     "bold": "\033[1m",
 }
 
-# Background colors for solid-fill placeholders
-BG_COLORS = {k: v.replace("[3", "[4") for k, v in COLORS.items() if k != "bold"}
-
 def draw_animal(app: App, width: int, height: int) -> str:
     animal_art = app.animal.get_art().copy()
     
@@ -53,12 +50,9 @@ def draw_animal(app: App, width: int, height: int) -> str:
     wave_chars = ["~", "≈", "∽"]
     
     animal_color = COLORS.get(app.color, COLORS["yellow"])
-    animal_bg = BG_COLORS.get(app.color, BG_COLORS["yellow"])
     water_color = COLORS["cyan"]
     cloud_color = COLORS["white"]
-    cloud_bg = BG_COLORS["white"]
     sun_color = COLORS["yellow"]
-    sun_bg = BG_COLORS["yellow"]
     
     frame_lines = []
     
@@ -79,7 +73,7 @@ def draw_animal(app: App, width: int, height: int) -> str:
             if animal_row is not None and ax <= col_idx < ax + len(animal_row):
                 animal_char = animal_row[col_idx - ax]
                 if animal_char == "·":
-                    row_str += animal_bg + " " + RESET_COLOR
+                    row_str += animal_color + " " + RESET_COLOR
                     continue
                 elif animal_char != " ":
                     row_str += animal_color + animal_char + RESET_COLOR
@@ -91,7 +85,7 @@ def draw_animal(app: App, width: int, height: int) -> str:
             if sy <= row_idx < sy + len(sart) and sx <= col_idx < sx + len(sart[0]):
                 sun_char = sart[row_idx - sy][col_idx - sx]
                 if sun_char == "·":
-                    row_str += sun_bg + " " + RESET_COLOR
+                    row_str += sun_color + " " + RESET_COLOR
                     continue
                 elif sun_char != " ":
                     row_str += sun_color + sun_char + RESET_COLOR
@@ -115,7 +109,7 @@ def draw_animal(app: App, width: int, height: int) -> str:
             
             if cloud_char:
                 if cloud_char == "·":
-                    row_str += cloud_bg + " " + RESET_COLOR
+                    row_str += cloud_color + " " + RESET_COLOR
                 else:
                     row_str += cloud_color + cloud_char + RESET_COLOR
                 continue
