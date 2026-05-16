@@ -85,7 +85,10 @@ def draw_animal(app: App, width: int, height: int) -> str:
             sart = app.sun.get_art()
             if sy <= row_idx < sy + len(sart) and sx <= col_idx < sx + len(sart[0]):
                 sun_char = sart[row_idx - sy][col_idx - sx]
-                if sun_char != " ":
+                if sun_char == "·":
+                    row_str += sun_color + " " + RESET_COLOR
+                    continue
+                elif sun_char != " ":
                     row_str += sun_color + sun_char + RESET_COLOR
                     continue
 

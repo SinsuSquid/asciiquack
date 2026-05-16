@@ -1,25 +1,30 @@
 from typing import List
 
 class Sun:
-    # Winking smiling sun frames
+    # A rounder, cuter winking sun
+    # '·' is used for solid color fill
     FRAME_A = [
-        "   \\  |  /   ",
-        "  -- O u O -- ",
-        "   /  |  \\   "
+        "      \\ | /      ",
+        "    .-'···'-.    ",
+        "   (··O·u·O··)   ",
+        "    '-.···.-'    ",
+        "      / | \\      "
     ]
     
     FRAME_B = [
-        "   \\  |  /   ",
-        "  -- O u - -- ",
-        "   /  |  \\   "
+        "      \\ | /      ",
+        "    .-'···'-.    ",
+        "   (··-·u·O··)   ",
+        "    '-.···.-'    ",
+        "      / | \\      "
     ]
 
     def __init__(self, x: int, y: int):
         self.x = x
         self.y = y
         self.tick = 0
-        self.width = 13
-        self.height = 3
+        self.width = 17
+        self.height = 5
 
     def update(self):
         self.tick += 1
