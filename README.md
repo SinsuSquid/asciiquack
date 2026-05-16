@@ -3,10 +3,13 @@
 A lightweight, zero-dependency terminal rubber-animal for debugging, drifting, and dreaming.
 
 ```
-      (o)(o)
-     (  u   )   ~  ≈  ∽  ~  ≈
-    (        )  ≈  ∽  ~  ≈  ∽
-     `------'   ∽  ~  ≈  ∽  ~
+         \ | /
+       .-'---'-.
+      /         \   ~  ≈  ∽  ~  ≈
+     |   O u O   |  ≈  ∽  ~  ≈  ∽
+      \         /   ∽  ~  ≈  ∽  ~
+       '-.---.-'
+         / | \
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Talk to Frog (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal): _
 ```
