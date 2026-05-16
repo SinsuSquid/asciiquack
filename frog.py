@@ -1,20 +1,21 @@
 import math
 from typing import List
 
-class Duck:
-    # Use '·' for solid-colored spaces to avoid transparency
+class Frog:
+    # A minimalist "Chibi" frog - round, simple, and very cute!
+    # Filled all internal gaps with '·' to ensure solid color.
     ART_RIGHT = [
-        "      __",
-        "    <(o·)___",
-        "     (·····/",
-        "      `---'"
+        "      (o)(o)    ",
+        "     (··u··)    ",
+        "    (········)  ",
+        "     `------'   "
     ]
     
     ART_LEFT = [
-        "      __",
-        "   ___(·o)>",
-        "   \\·····)",
-        "    `---'"
+        "      (o)(o)    ",
+        "     (··u··)    ",
+        "    (········)  ",
+        "     `------'   "
     ]
 
     def __init__(self, x: int, y: int):
@@ -22,12 +23,12 @@ class Duck:
         self.y = float(y)
         self.target_x = float(x)
         self.target_y = float(y)
-        self.width = 12
+        self.width = 16
         self.height = 4
         self.facing_right = True
         self.tick = 0
-        self.name = "Duck"
-        self.sound = "Quack"
+        self.name = "Frog"
+        self.sound = "Ribbit"
 
     def update(self, bounds_width: int, bounds_height: int):
         self.tick += 1

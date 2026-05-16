@@ -26,32 +26,30 @@ COLORS = {
     "bold": "\033[1m",
 }
 
-def draw_duck(app: App, width: int, height: int) -> str:
-    duck_art = app.duck.get_art().copy()
+def draw_animal(app: App, width: int, height: int) -> str:
+    animal_art = app.animal.get_art().copy()
     
     # Add hat if any
-    hat_width_bonus = 0
     if app.hat == "Top Hat":
-        duck_art.insert(0, "      _|_")
-        duck_art.insert(1, "     |___|")
+        animal_art.insert(0, "      _|_")
+        animal_art.insert(1, "     |___|")
     elif app.hat == "Cap":
-        duck_art.insert(0, "      ___/")
+        animal_art.insert(0, "      ___/")
     elif app.hat == "Flower":
-        duck_art.insert(0, "       🌸")
-        # 🌸 is a wide char (2 columns), but len() is 1. We need to account for it!
-        hat_width_bonus = 1
+        animal_art.insert(0, "       🌸")
 
-    x = int(app.duck.x)
-    bob = math.sin(app.duck.tick * 0.2)
-    y = int(app.duck.y + bob)
+    x = int(app.animal.x)
+    bob = math.sin(app.animal.tick * 0.2)
+    y = int(app.animal.y + bob)
     
-    hat_height = len(duck_art) - 4
+    # Original art height is 4
+    hat_height = len(animal_art) - 4
     y = max(0, y - hat_height)
     
     crumbs = set(app.breadcrumbs)
     wave_chars = ["~", "≈", "∽"]
     
-    duck_color = COLORS.get(app.color, COLORS["yellow"])
+    animal_color = COLORS.get(app.color, COLORS["yellow"])
     water_color = COLORS["cyan"]
     
     frame_lines = []
@@ -64,13 +62,13 @@ def draw_duck(app: App, width: int, height: int) -> str:
 
     for row_idx in range(anim_height):
         row_str = ""
-        duck_row = None
-        if y <= row_idx < y + len(duck_art):
-            duck_row = duck_art[row_idx - y]
+        animal_row = None
+        if y <= row_idx < y + len(animal_art):
+            animal_row = animal_art[row_idx - y]
 
         for col_idx in range(width):
-            # Wave surface undulates per-column for vertical wave height
-            wave_offset = int(math.sin(col_idx * 0.1 + app.duck.tick * 0.15) * 2)
+            # Wave surface undulates per-column
+            wave_offset = int(math.sin(col_idx * 0.1 + app.animal.tick * 0.15) * 2)
             is_water = row_idx >= wave_surface_base + wave_offset
             color = water_color if is_water else COLORS["yellow"]
 
@@ -78,19 +76,17 @@ def draw_duck(app: App, width: int, height: int) -> str:
             if (col_idx, row_idx) in crumbs:
                 bg_char = "."
             elif is_water:
-                bg_char = wave_chars[(col_idx + app.duck.tick) // 5 % len(wave_chars)]
+                bg_char = wave_chars[(col_idx + app.animal.tick) // 5 % len(wave_chars)]
             else:
                 bg_char = " "
 
-            # Duck character?
-            if duck_row is not None and x <= col_idx < x + len(duck_row):
-                duck_char = duck_row[col_idx - x]
-                # If it's our solid-space placeholder, turn it into a real space!
-                if duck_char == "·":
-                    row_str += duck_color + " " + RESET_COLOR
-                # Only real spaces from the art box are transparent!
-                elif duck_char != " ":
-                    row_str += duck_color + duck_char + RESET_COLOR
+            # Animal character?
+            if animal_row is not None and x <= col_idx < x + len(animal_row):
+                animal_char = animal_row[col_idx - x]
+                if animal_char == "·":
+                    row_str += animal_color + " " + RESET_COLOR
+                elif animal_char != " ":
+                    row_str += animal_color + animal_char + RESET_COLOR
                 else:
                     row_str += color + bg_char + RESET_COLOR
             else:
@@ -99,8 +95,6 @@ def draw_duck(app: App, width: int, height: int) -> str:
         frame_lines.append(row_str)
 
     # Chat area
-    # Chat area
-    # Subtracting 4: 2 for borders, 1 for input, 1 to avoid the very last terminal line
     chat_height = height - anim_height - 4
     if chat_height < 1:
         anim_height = max(1, height - 5)
@@ -112,54 +106,51 @@ def draw_duck(app: App, width: int, height: int) -> str:
     for i in range(chat_height):
         if i < len(recent_msgs):
             sender, msg = recent_msgs[i]
-            s_color = COLORS["yellow"] if sender == "Duck" else COLORS["green"]
-            # Basic truncation for chat messages (approximate due to ANSI)
-            clean_msg = msg[:width - 10]
+            # Color based on sender
+            if sender == "System":
+                s_color = COLORS["magenta"]
+            elif sender == "You":
+                s_color = COLORS["white"]
+            else:
+                s_color = COLORS["green"] if sender == "Frog" else COLORS["yellow"]
+                
+            clean_msg = msg[:width - 15]
             line = f"{COLORS['bold']}{s_color}{sender}:{RESET_COLOR} {clean_msg}"
             frame_lines.append(line)
         else:
             frame_lines.append("")
 
     # Input area
-    footer = " (ESC: Q | TAB: C | H: H | F: F)"
+    footer = " (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal) "
     frame_lines.append(COLORS["green"] + "─" * width + RESET_COLOR)
 
-    # Truncate input to avoid wrapping
-    max_input = width - len("Talk to Duck: ") - len(footer) - 2
+    prompt = f"Talk to {app.animal.name}: "
+    max_input = width - len(prompt) - len(footer) - 2
     display_input = app.input_buffer[-max_input:] if len(app.input_buffer) > max_input else app.input_buffer
-    input_line = f"{COLORS['white']}Talk to Duck{footer}: {display_input}"
+    input_line = f"{COLORS['white']}{prompt}{footer}{display_input}"
     frame_lines.append(input_line)
 
-    # Return exactly height-1 lines to avoid triggering a scroll
     return frame_lines[:height-1]
 
 def render_frame(app: App, width: int, height: int):
-    # Hide cursor while drawing to avoid "ghosting"
+    import sys
     sys.stdout.write(HIDE_CURSOR)
     
-    lines = draw_duck(app, width, height)
+    lines = draw_animal(app, width, height)
     output = []
     for i, line in enumerate(lines):
-        # Move to exactly row i+1, column 1, print line, then clear rest of line
         output.append(move_to(i + 1, 1) + line + CLEAR_LINE)
     
-    # Calculate cursor position at the end of the input line
-    # The input line is the last line in our list
     last_line_idx = len(lines)
-    footer = " (ESC: Q | TAB: C | H: H | F: F)"
-    # Length of "Talk to Duck" + footer + ": " + display_input
-    # We need to be careful with display_input truncation again
-    max_input = width - len("Talk to Duck: ") - len(footer) - 2
+    footer = " (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal) "
+    prompt = f"Talk to {app.animal.name}: "
+    max_input = width - len(prompt) - len(footer) - 2
     display_input = app.input_buffer[-max_input:] if len(app.input_buffer) > max_input else app.input_buffer
     
-    cursor_col = len("Talk to Duck") + len(footer) + len(": ") + len(display_input) + 1
+    cursor_col = len(prompt) + len(footer) + len(display_input) + 1
     
-    # Move to the input position and show the cursor
     output.append(move_to(last_line_idx, cursor_col))
     output.append(SHOW_CURSOR)
     
     sys.stdout.write("".join(output))
     sys.stdout.flush()
-
-import sys
-

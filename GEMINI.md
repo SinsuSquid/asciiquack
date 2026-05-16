@@ -1,4 +1,4 @@
-# Asciiquack Project Guidelines 🦆⚡
+# Asciifrog Project Guidelines 🐸⚡
 
 ## Engineering Standards
 - **Language:** Python 3.13
@@ -10,7 +10,7 @@
 ## Architecture
 - **App Module:** Core logic and state.
 - **UI Module:** Low-level ANSI rendering logic.
-- **Duck Module:** Duck movement and ASCII representation.
+- **Frog Module:** Frog movement and ASCII representation.
 
 ## Conventions
 - Use constants for ANSI escape sequences (e.g., `CLEAR`, `MOVE_CURSOR`).

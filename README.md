@@ -1,28 +1,30 @@
-# asciiquack 🦆🌊✨
+# asciiquack / asciifrog 🦆🐸🌊✨
 
-A lightweight, zero-dependency terminal rubber-duck for debugging, drifting, and dreaming.
+A lightweight, zero-dependency terminal rubber-animal for debugging, drifting, and dreaming.
 
 ```
-      __
-    <(o·)___  ~  ≈  ∽  ~  ≈
-     (·._>·/  ≈  ∽  ~  ≈  ∽
-      `---'   ∽  ~  ≈  ∽  ~
+      (o)(o)
+     (  u   )   ~  ≈  ∽  ~  ≈
+    (        )  ≈  ∽  ~  ≈  ∽
+     `------'   ∽  ~  ≈  ∽  ~
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Talk to Duck (ESC: Q | TAB: C | H: H | F: F): _
+Talk to Frog (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal): _
 ```
 
-Inspired by the classic `asciiaquarium`, **asciiquack** brings a peaceful, floating rubber duckie right into your terminal. No heavy libraries, no complex setups—just pure Python and raw ANSI escape codes.
+Inspired by the classic `asciiaquarium`, this app brings a peaceful, floating rubber companion right into your terminal. No heavy libraries, no complex setups—just pure Python and raw ANSI escape codes.
 
 ---
 
 ## ✨ Features
 
-- **🌊 Peaceful Waves:** Watch your duckie bob and drift on gentle, animated ASCII waves.
-- **💬 Rubber Duck Debugging:** Talk to your duck! It listens to your debugging woes and responds with wisdom (mostly variations of "Quack").
-- **📺 Fullscreen Stability:** Uses the Alternate Screen Buffer to ensure a flicker-free, stable experience that doesn't mess with your terminal history.
-- **🎨 Customization:** Change your duck's color or give it some style with different hats!
-- **🥨 Feeding Time:** Press a key to drop some breadcrumbs and watch your duckie munch away.
-- **⚡ Zero Dependencies:** Built entirely with the Python standard library. No `pip install` required!
+- **🌊 Peaceful Waves:** Watch your animal bob and drift on gentle, animated ASCII waves.
+- **💬 Rubber Animal Debugging:** Talk to your companion! It listens to your debugging woes and responds with wisdom.
+- **🦆🐸 Multiple Species:** Switch between a cute Duck and a round Frog at any time!
+- **🐸 Froggy Mode (For JY):** A special, extra-cute chibi frog mode for when you need that extra bit of luck and cuteness.
+- **📺 Fullscreen Stability:** Uses the Alternate Screen Buffer to ensure a flicker-free, stable experience.
+- **🎨 Customization:** Change colors or give your friend some style with different hats!
+- **🥨 Feeding Time:** Press a key to drop some breadcrumbs and watch your friend munch away.
+- **⚡ Zero Dependencies:** Built entirely with the Python standard library.
 
 ---
 
@@ -42,10 +44,11 @@ python3 main.py
 
 | Key | Action |
 | :--- | :--- |
-| **`Enter`** | Send a message to the Duck |
-| **`Tab`** | Cycle Duck colors 🎨 |
+| **`Enter`** | Send a message to your friend |
+| **`Tab`** | Cycle colors 🎨 |
 | **`H`** | Cycle through hats (Top Hat, Cap, Flower) 🎩 |
-| **`F`** | Feed the duck breadcrumbs 🥨 |
+| **`F`** | Feed breadcrumbs 🥨 |
+| **`A`** | **Switch Animal (Duck ↔ Frog)** 🔄 |
 | **`ESC`** | Exit the pond safely |
 
 ---
@@ -53,14 +56,14 @@ python3 main.py
 ## 🛠️ Built With
 
 - **Python 3.13+**
-- **Raw ANSI Escape Codes** (for maximum lightweight performance)
-- **Love and Duck Magic** 💖🦆
+- **Raw ANSI Escape Codes**
+- **Love and Animal Magic** 💖🦆🐸
 
 ---
 
 ## 📜 License
 
-MIT License. See `LICENSE` for details. (Coming soon!)
+MIT License.
 
 ---
 
