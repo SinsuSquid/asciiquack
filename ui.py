@@ -38,19 +38,21 @@ def draw_animal(app: App, width: int, height: int) -> str:
     elif app.hat == "Flower":
         animal_art.insert(0, "       🌸")
 
-    x = int(app.animal.x)
+    ax = int(app.animal.x)
     bob = math.sin(app.animal.tick * 0.2)
-    y = int(app.animal.y + bob)
+    ay = int(app.animal.y + bob)
     
     # Original art height is 4
     hat_height = len(animal_art) - 4
-    y = max(0, y - hat_height)
+    ay = max(0, ay - hat_height)
     
     crumbs = set(app.breadcrumbs)
     wave_chars = ["~", "≈", "∽"]
     
     animal_color = COLORS.get(app.color, COLORS["yellow"])
     water_color = COLORS["cyan"]
+    cloud_color = COLORS["white"]
+    sun_color = COLORS["yellow"]
     
     frame_lines = []
     
@@ -63,34 +65,78 @@ def draw_animal(app: App, width: int, height: int) -> str:
     for row_idx in range(anim_height):
         row_str = ""
         animal_row = None
-        if y <= row_idx < y + len(animal_art):
-            animal_row = animal_art[row_idx - y]
+        if ay <= row_idx < ay + len(animal_art):
+            animal_row = animal_art[row_idx - ay]
 
         for col_idx in range(width):
-            # Wave surface undulates per-column
+            # 1. Animal character takes precedence
+            if animal_row is not None and ax <= col_idx < ax + len(animal_row):
+                animal_char = animal_row[col_idx - ax]
+                if animal_char == "·":
+                    row_str += animal_color + " " + RESET_COLOR
+                    continue
+                elif animal_char != " ":
+                    row_str += animal_color + animal_char + RESET_COLOR
+                    continue
+
+            # 2. Sun rendering
+            sun_char = None
+            sx, sy = app.sun.x, app.sun.y
+            sart = app.sun.get_art()
+            if sy <= row_idx < sy + len(sart) and sx <= col_idx < sx + len(sart[0]):
+                sun_char = sart[row_idx - sy][col_idx - sx]
+                if sun_char != " ":
+                    row_str += sun_color + sun_char + RESET_COLOR
+                    continue
+
+            # 3. Rainbow rendering
+            rainbow_char = None
+            if app.rainbow:
+                rx, ry = app.rainbow.x, app.rainbow.y
+                rart = app.rainbow.get_art()
+                if ry <= row_idx < ry + len(rart) and rx <= col_idx < rx + len(rart[0]):
+                    rchar = rart[row_idx - ry][col_idx - rx]
+                    if rchar != " ":
+                        rcolor = RESET_COLOR
+                        if rchar == "R": rcolor = COLORS["red"]
+                        elif rchar == "M": rcolor = COLORS["magenta"]
+                        elif rchar == "Y": rcolor = COLORS["yellow"]
+                        row_str += rcolor + rchar + RESET_COLOR
+                        continue
+
+            # 4. Wave surface logic
             wave_offset = int(math.sin(col_idx * 0.1 + app.animal.tick * 0.15) * 2)
             is_water = row_idx >= wave_surface_base + wave_offset
-            color = water_color if is_water else COLORS["yellow"]
+            
+            # 5. Cloud character
+            cloud_char = None
+            for cloud in app.clouds:
+                cx = int(cloud.x)
+                cy = int(cloud.y)
+                cart = cloud.get_art()
+                if cy <= row_idx < cy + len(cart) and cx <= col_idx < cx + len(cart[0]):
+                    char = cart[row_idx - cy][col_idx - cx]
+                    if char != " ":
+                        cloud_char = char
+                        break
+            
+            if cloud_char:
+                if cloud_char == "·":
+                    row_str += cloud_color + " " + RESET_COLOR
+                else:
+                    row_str += cloud_color + cloud_char + RESET_COLOR
+                continue
 
-            # Background character
+            # 6. Default background
+            color = water_color if is_water else COLORS["yellow"]
             if (col_idx, row_idx) in crumbs:
                 bg_char = "."
             elif is_water:
                 bg_char = wave_chars[(col_idx + app.animal.tick) // 5 % len(wave_chars)]
             else:
                 bg_char = " "
-
-            # Animal character?
-            if animal_row is not None and x <= col_idx < x + len(animal_row):
-                animal_char = animal_row[col_idx - x]
-                if animal_char == "·":
-                    row_str += animal_color + " " + RESET_COLOR
-                elif animal_char != " ":
-                    row_str += animal_color + animal_char + RESET_COLOR
-                else:
-                    row_str += color + bg_char + RESET_COLOR
-            else:
-                row_str += color + bg_char + RESET_COLOR
+            
+            row_str += color + bg_char + RESET_COLOR
 
         frame_lines.append(row_str)
 

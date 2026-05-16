@@ -1,6 +1,10 @@
 from typing import List, Tuple, Union
+import random
 from frog import Frog
 from duck import Duck
+from cloud import Cloud
+from sun import Sun
+from rainbow import Rainbow
 
 class App:
     def __init__(self):
@@ -22,6 +26,17 @@ class App:
         self.hat_idx = 0
         self.hat = "None"
         self.breadcrumbs: List[Tuple[int, int]] = []
+        
+        # Clouds in the sky
+        self.clouds: List[Cloud] = []
+        for _ in range(3):
+            self.clouds.append(Cloud(random.uniform(0, 80), random.uniform(0, 5)))
+            
+        # The Sun
+        self.sun = Sun(60, 1)
+        
+        # The Rainbow
+        self.rainbow: Union[Rainbow, None] = None
 
     def toggle_animal(self):
         # Save current position
@@ -62,6 +77,16 @@ class App:
         if len(self.breadcrumbs) > 20:
             self.breadcrumbs.pop(0)
         self.add_message(self.animal.name, f"{self.animal.sound}! (Happy munching)")
+        
+        # Feeding has a chance to spawn a rainbow!
+        if random.random() < 0.3:
+            self.spawn_rainbow(width)
+
+    def spawn_rainbow(self, width: int):
+        if not self.rainbow:
+            rx = random.randint(0, max(0, width - 21))
+            self.rainbow = Rainbow(rx, 2)
+            self.add_message("System", "A rainbow appeared! 🌈")
 
     def add_message(self, sender: str, text: str):
         self.messages.append((sender, text))
@@ -71,6 +96,22 @@ class App:
     def update(self, width: int, height: int):
         # Update animation
         self.animal.update(width, height)
+        
+        # Update clouds
+        for cloud in self.clouds:
+            cloud.update(width)
+            
+        # Update sun
+        self.sun.update()
+        
+        # Update rainbow
+        if self.rainbow:
+            if not self.rainbow.update():
+                self.rainbow = None
+        
+        # Random chance for a rainbow anyway
+        if random.random() < 0.001:
+            self.spawn_rainbow(width)
         
         # Check for eaten breadcrumbs
         ax = int(self.animal.x)
