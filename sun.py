@@ -1,29 +1,29 @@
 from typing import List
 
 class Sun:
-    # A rounder, cuter winking sun
+    # A starburst-style cute sun that doesn't look like an onion!
     # '·' is used for solid color fill
     FRAME_A = [
-        "      \\ | /      ",
-        "    .-'···'-.    ",
-        "   (··O·u·O··)   ",
-        "    '-.···.-'    ",
-        "      / | \\      "
+        "       |       ",
+        "  \\  .---.  /  ",
+        " -- (··O·u·O··) -- ",
+        "  /  '---'  \\  ",
+        "       |       "
     ]
     
     FRAME_B = [
-        "      \\ | /      ",
-        "    .-'···'-.    ",
-        "   (··-·u·O··)   ",
-        "    '-.···.-'    ",
-        "      / | \\      "
+        "       |       ",
+        "  \\  .---.  /  ",
+        " -- (··-·u·O··) -- ",
+        "  /  '---'  \\  ",
+        "       |       "
     ]
 
     def __init__(self, x: int, y: int):
         self.x = x
         self.y = y
         self.tick = 0
-        self.width = 17
+        self.width = 19
         self.height = 5
 
     def update(self):
