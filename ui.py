@@ -89,26 +89,11 @@ def draw_animal(app: App, width: int, height: int) -> str:
                     row_str += sun_color + sun_char + RESET_COLOR
                     continue
 
-            # 3. Rainbow rendering
-            rainbow_char = None
-            if app.rainbow:
-                rx, ry = app.rainbow.x, app.rainbow.y
-                rart = app.rainbow.get_art()
-                if ry <= row_idx < ry + len(rart) and rx <= col_idx < rx + len(rart[0]):
-                    rchar = rart[row_idx - ry][col_idx - rx]
-                    if rchar != " ":
-                        rcolor = RESET_COLOR
-                        if rchar == "R": rcolor = COLORS["red"]
-                        elif rchar == "M": rcolor = COLORS["magenta"]
-                        elif rchar == "Y": rcolor = COLORS["yellow"]
-                        row_str += rcolor + rchar + RESET_COLOR
-                        continue
-
-            # 4. Wave surface logic
+            # 3. Wave surface logic
             wave_offset = int(math.sin(col_idx * 0.1 + app.animal.tick * 0.15) * 2)
             is_water = row_idx >= wave_surface_base + wave_offset
             
-            # 5. Cloud character
+            # 4. Cloud character
             cloud_char = None
             for cloud in app.clouds:
                 cx = int(cloud.x)
@@ -127,7 +112,7 @@ def draw_animal(app: App, width: int, height: int) -> str:
                     row_str += cloud_color + cloud_char + RESET_COLOR
                 continue
 
-            # 6. Default background
+            # 5. Default background
             color = water_color if is_water else COLORS["yellow"]
             if (col_idx, row_idx) in crumbs:
                 bg_char = "."
