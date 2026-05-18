@@ -37,6 +37,17 @@ def draw_animal(app: App, width: int, height: int) -> str:
         animal_art.insert(0, "      ___/")
     elif app.hat == "Flower":
         animal_art.insert(0, "       🌸")
+    elif app.hat == "Crown":
+        animal_art.insert(0, "      +w+ ")
+    elif app.hat == "Beret":
+        animal_art.insert(0, "      __* ")
+        animal_art.insert(1, "     (___)")
+    elif app.hat == "Wizard":
+        animal_art.insert(0, "       ^  ")
+        animal_art.insert(1, "      / \\ ")
+        animal_art.insert(2, "     /___\\")
+    elif app.hat == "Bow":
+        animal_art.insert(0, "      🎀  ")
 
     ax = int(app.animal.x)
     bob = math.sin(app.animal.tick * 0.2)

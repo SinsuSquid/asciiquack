@@ -21,7 +21,7 @@ class App:
 
         self.color: str = "green" if self.animal.name == "Frog" else "yellow"
         self.colors = ["green", "yellow", "cyan", "magenta", "red", "white"]
-        self.hats = ["None", "Top Hat", "Cap", "Flower"]
+        self.hats = ["None", "Top Hat", "Cap", "Flower", "Crown", "Beret", "Wizard", "Bow"]
         self.hat_idx = 0
         self.hat = "None"
         self.breadcrumbs: List[Tuple[int, int]] = []

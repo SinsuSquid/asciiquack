@@ -72,7 +72,7 @@ If you want to package the app into a standalone executable, you can use **PyIns
 | :--- | :--- |
 | **`Enter`** | Send a message to your friend |
 | **`Tab`** | Cycle colors 🎨 |
-| **`H`** | Cycle through hats (Top Hat, Cap, Flower) 🎩 |
+| **`H`** | Cycle through hats (**None, Top Hat, Cap, Flower, Crown, Beret, Wizard, Bow**) 🎩👑🎀 |
 | **`F`** | Feed breadcrumbs 🥨 |
 | **`A`** | **Switch Animal (Duck ↔ Frog)** 🔄 |
 | **`ESC`** | Exit the pond safely |
