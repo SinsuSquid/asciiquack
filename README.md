@@ -10,12 +10,12 @@ A lightweight, zero-dependency terminal rubber-animal for debugging, drifting, a
       / | \         (         )
                      `-------'
 
-      (o)(o)
-     (  u   )   ~  ≈  ∽  ~  ≈
-    (        )  ≈  ∽  ~  ≈  ∽
-     `------'   ∽  ~  ≈  ∽  ~
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Talk to Frog (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal): _
+      __             (o)(o)
+    <(o )___        (  u   )    ~  ≈  ∽  ~  ≈
+     (     /       (        )   ≈  ∽  ~  ≈  ∽
+      `---'         `------'    ∽  ~  ≈  ∽  ~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Talk to Frog/Duck (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal): _
 ```
 
 Inspired by the classic `asciiaquarium`, this app brings a peaceful, floating rubber companion right into your terminal. No heavy libraries, no complex setups—just pure Python and raw ANSI escape codes.
@@ -49,6 +49,23 @@ python3 main.py
 
 ---
 
+## 🛠️ Building
+
+If you want to package the app into a standalone executable, you can use **PyInstaller**:
+
+1. **Install PyInstaller:**
+   ```bash
+   pip install pyinstaller
+   ```
+2. **Build the binary:**
+   ```bash
+   pyinstaller --onefile --name asciiquack main.py
+   ```
+3. **Run it:**
+   Check the `dist/` directory for your shiny new `asciiquack` executable!
+
+---
+
 ## 🎮 Controls
 
 | Key | Action |
@@ -66,6 +83,7 @@ python3 main.py
 
 - **Python 3.13+**
 - **Raw ANSI Escape Codes**
+- **PyInstaller** (For standalone binaries)
 - **Love and Animal Magic** 💖🦆🐸
 
 ---
