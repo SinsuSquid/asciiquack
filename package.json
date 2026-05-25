@@ -2,8 +2,12 @@
   "name": "asciiquack",
   "displayName": "Asciiquack",
   "description": "A friendly ASCII duck and frog for your VS Code sidebar!",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "SinsuSquid",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SinsuSquid/asciiquack.git"
+  },
   "engines": {
     "vscode": "^1.60.0"
   },
