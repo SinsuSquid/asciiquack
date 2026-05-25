@@ -1,6 +1,6 @@
 # asciiquack / asciifrog 🦆🐸🌊✨
 
-A lightweight, zero-dependency terminal rubber-animal for debugging, drifting, and dreaming.
+A lightweight, zero-dependency terminal rubber-companion and **VS Code Sidebar Extension** for debugging, drifting, and dreaming.
 
 ```
       \ | /
@@ -11,86 +11,82 @@ A lightweight, zero-dependency terminal rubber-animal for debugging, drifting, a
                      `-------'
 
       __             (o)(o)
-    <(o )___        (  u   )    ~  ≈  ∽  ~  ≈
-     (     /       (        )   ≈  ∽  ~  ≈  ∽
-      `---'         `------'    ∽  ~  ≈  ∽  ~
+    <(o )___        (  u   )    ~  -  _  -  ~
+     (     /       (        )   -  _  -  ~  -
+      `---'         `------'    _  -  ~  -  _
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Talk to Frog/Duck (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal): _
+Talk to Frog/Duck (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal | C: Chat): _
 ```
 
-Inspired by the classic `asciiaquarium`, this app brings a peaceful, floating rubber companion right into your terminal. No heavy libraries, no complex setups—just pure Python and raw ANSI escape codes.
+Inspired by the classic `asciiaquarium`, this app brings a peaceful, floating rubber companion right into your workspace. Run it as a **standalone Python TUI** in your terminal or install it as a **sidebar panel in VS Code** (similar to `vscode-pet`) for the ultimate companion programming experience! 💖
 
 ---
 
-## ✨ Features
+## 🚀 Modes of Operation
 
-- **🌊 Peaceful Waves:** Watch your animal bob and drift on gentle, animated ASCII waves.
-- **💬 Rubber Animal Debugging:** Talk to your companion! It listens to your debugging woes and responds with wisdom.
-- **🦆🐸 Multiple Species:** Switch between a cute Duck and a round Frog at any time!
-- **🐸 Froggy Mode (For JY):** A special, extra-cute chibi frog mode for when you need that extra bit of luck and cuteness.
-- **☀️ Smiling Sun:** A happy, winking sun that watches over the pond.
-- **☁️ Flowing Clouds:** Cartoon-style clouds that drift gently across the sky.
-- **📺 Fullscreen Stability:** Uses the Alternate Screen Buffer to ensure a flicker-free, stable experience.
-- **🎨 Customization:** Change colors or give your friend some style with different hats!
-- **🥨 Feeding Time:** Press a key to drop some breadcrumbs and watch your friend munch away.
-- **⚡ Zero Dependencies:** Built entirely with the Python standard library.
+### 📺 1. TUI Mode (Terminal User Interface)
+Built entirely in Python 3.13 using the standard library and raw ANSI escape codes. Extremely lightweight, fast, and runs in any terminal emulator.
 
----
-
-## 🚀 Quick Start
-
-Since there are no dependencies, you can run it directly with Python 3:
-
+#### Quick Start:
 ```bash
 git clone git@github.com:SinsuSquid/asciiquack.git
 cd asciiquack
 python3 main.py
 ```
 
----
-
-## 🛠️ Building
-
-If you want to package the app into a standalone executable, you can use **PyInstaller**:
-
-1. **Install PyInstaller:**
-   ```bash
-   pip install pyinstaller
-   ```
-2. **Build the binary:**
-   ```bash
-   pyinstaller --onefile --name asciiquack main.py
-   ```
-3. **Run it:**
-   Check the `dist/` directory for your shiny new `asciiquack` executable!
+#### Packaging as Binary:
+You can package the TUI into a standalone executable using **PyInstaller**:
+```bash
+pip install pyinstaller
+pyinstaller --onefile --name asciiquack main.py
+```
+Find your compiled binary in the `dist/` directory!
 
 ---
 
-## 🎮 Controls
+### 💻 2. VS Code Sidebar Extension Mode
+A native VS Code extension that renders the pond in a dedicated Webview View in your Activity Bar. Re-coded in HTML/CSS/JS with:
+- **Cyberpunk Dark Theme:** Neon-green frogs, gold-yellow ducks, and glowing text shadows.
+- **CRT Scanline Effects:** A vintage digital screen texture overlaid on the pond.
+- **Responsive Layout:** The HTML rendering dynamically adjusts to fit your sidebar perfectly.
+- **Interactive UI Buttons:** Click buttons or use keyboard shortcuts to interact.
 
-| Key | Action |
+#### Local VSIX Installation:
+Install the pre-compiled extension bundle directly into VS Code:
+```bash
+code --install-extension asciiquack-0.1.0.vsix
+```
+
+#### Launching in Development:
+1. Open this repository in VS Code.
+2. Run `npm install` to setup development types.
+3. Press **`F5`** (or select **"Run Extension"** in the Debug panel) to launch the **Extension Development Host**.
+4. Click the yellow pixel-art duck icon in the Activity Bar!
+
+---
+
+## 🎮 Controls & Shortcuts
+
+The following keybindings work in both **TUI Mode** and **VS Code Extension Mode** (when the input field is not focused in the extension):
+
+| Key / Control | Action |
 | :--- | :--- |
-| **`Enter`** | Send a message to your friend |
-| **`Tab`** | Cycle colors 🎨 |
-| **`H`** | Cycle through hats (**None, Top Hat, Cap, Flower, Crown, Beret, Wizard, Bow**) 🎩👑🎀 |
-| **`F`** | Feed breadcrumbs 🥨 |
-| **`A`** | **Switch Animal (Duck ↔ Frog)** 🔄 |
-| **`ESC`** | Exit the pond safely |
+| **`Enter`** / **Send** | Send a message to your companion |
+| **`Tab`** / **🎨 Color** | Cycle colors (**Yellow ↔ Green ↔ Cyan ↔ Magenta ↔ Red ↔ White**) |
+| **`H`** / **🎩 Hat** | Cycle through hats (**None, Top Hat, Cap, Flower, Crown, Beret, Wizard, Bow**) 🎩👑🎀 |
+| **`F`** / **🌾 Feed** | Feed breadcrumbs to the pond 🥨 |
+| **`A`** / **🔄 Swap** | Switch between animal species (**Duck ↔ Frog**) |
+| **`C`** / **💬 Chat** | **Toggle Conversation Log:** Hides the console log and dynamically expands the pond animation height! |
+| **`ESC`** | Exit the pond safely (TUI Mode only) |
 
 ---
 
-## 🛠️ Built With
+## 🛠️ Tech Stack
 
-- **Python 3.13+**
-- **Raw ANSI Escape Codes**
-- **PyInstaller** (For standalone binaries)
+- **Python 3.13+** & **Raw ANSI Escape Sequences** (TUI Engine)
+- **Node.js**, **VS Code Extension API**, and **HTML5/CSS3/JavaScript** (VS Code Webview Engine)
+- **PIL / Pillow** (For high-quality pixel art icon optimization)
 - **Love and Animal Magic** 💖🦆🐸
-
----
-
-## 📜 License
-
-MIT License.
 
 ---
 

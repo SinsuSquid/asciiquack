@@ -11,6 +11,9 @@
     "Other"
   ],
   "main": "./extension.js",
+  "activationEvents": [
+    "onView:asciiquack.view"
+  ],
   "contributes": {
     "viewsContainers": {
       "activitybar": [
