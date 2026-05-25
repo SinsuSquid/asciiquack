@@ -18,6 +18,8 @@ A lightweight, zero-dependency terminal rubber-companion and **VS Code Sidebar E
 Talk to Frog/Duck (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal | C: Chat): _
 ```
 
+![Asciiquack Screenshot](Screenshot.png)
+
 Inspired by the classic `asciiaquarium`, this app brings a peaceful, floating rubber companion right into your workspace. Run it as a **standalone Python TUI** in your terminal or install it as a **sidebar panel in VS Code** (similar to `vscode-pet`) for the ultimate companion programming experience! 💖
 
 ---
