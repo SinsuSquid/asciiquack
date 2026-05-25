@@ -1,0 +1,37 @@
+{
+  "name": "asciiquack",
+  "displayName": "Asciiquack",
+  "description": "A friendly ASCII duck and frog for your VS Code sidebar!",
+  "version": "0.1.0",
+  "publisher": "SinsuSquid",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "asciiquack-explorer",
+          "title": "Asciiquack",
+          "icon": "resources/icon.png"
+        }
+      ]
+    },
+    "views": {
+      "asciiquack-explorer": [
+        {
+          "type": "webview",
+          "id": "asciiquack.view",
+          "name": "Pond"
+        }
+      ]
+    }
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.60.0"
+  }
+}

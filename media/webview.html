@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asciiquack Pond</title>
+    <style>
+        :root {
+            --sky-bg: #0b0f19;
+            --border-glow: rgba(0, 240, 255, 0.15);
+            --neon-green: #39ff14;
+            --neon-yellow: #ffd700;
+            --neon-cyan: #00f0ff;
+            --neon-magenta: #ff007f;
+            --neon-red: #ff3131;
+            --neon-white: #f8f9fa;
+        }
+
+        body {
+            background-color: transparent;
+            color: var(--vscode-foreground, #cccccc);
+            font-family: var(--vscode-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+
+        /* Title Area */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding: 2px 4px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .header h3 {
+            margin: 0;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            opacity: 0.8;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 4px rgba(0, 240, 255, 0.3);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background-color: var(--neon-green);
+            border-radius: 50%;
+            box-shadow: 0 0 6px var(--neon-green);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+
+        /* Pond Canvas Screen */
+        #screen-container {
+            position: relative;
+            background: var(--sky-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 8px;
+            overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8), 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        #screen-container::after {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 3px;
+            z-index: 10;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        #pond {
+            margin: 0;
+            font-family: var(--vscode-editor-font-family), 'Consolas', 'Courier New', monospace;
+            font-size: 9px;
+            line-height: 1.1;
+            white-space: pre;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* Color classes inside ASCII display */
+        .sky {
+            color: #1e293b;
+        }
+        .water {
+            color: #0ea5e9;
+            text-shadow: 0 0 2px rgba(14, 165, 233, 0.4);
+        }
+        .sun {
+            color: #eab308;
+            font-weight: bold;
+            text-shadow: 0 0 6px #eab308;
+        }
+        .sun-bg {
+            color: transparent;
+        }
+        .cloud {
+            color: #94a3b8;
+        }
+        .animal-fill {
+            color: transparent;
+        }
+        .crumb {
+            color: #d97706;
+            font-weight: bold;
+        }
+        .crumb-water {
+            color: #fbbf24;
+            font-weight: bold;
+            text-shadow: 0 0 2px #fbbf24;
+        }
+
+        /* Dynamic Animal Colors */
+        .green { color: var(--neon-green) !important; text-shadow: 0 0 4px rgba(57,255,20,0.5); }
+        .yellow { color: var(--neon-yellow) !important; text-shadow: 0 0 4px rgba(255,215,0,0.5); }
+        .cyan { color: var(--neon-cyan) !important; text-shadow: 0 0 4px rgba(0,240,255,0.5); }
+        .magenta { color: var(--neon-magenta) !important; text-shadow: 0 0 4px rgba(255,0,127,0.5); }
+        .red { color: var(--neon-red) !important; text-shadow: 0 0 4px rgba(255,49,49,0.5); }
+        .white { color: var(--neon-white) !important; text-shadow: 0 0 4px rgba(248,249,250,0.5); }
+
+        /* Controls Panel */
+        .toolbar {
+            display: flex;
+            gap: 4px;
+            margin-top: 8px;
+            justify-content: space-between;
+        }
+
+        button {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--vscode-foreground, #cccccc);
+            padding: 5px 3px;
+            font-size: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.25);
+            color: var(--vscode-foreground, #ffffff);
+        }
+
+        button:active {
+            transform: scale(0.96);
+        }
+
+        /* Chat Logs Area */
+        #chat-container {
+            margin-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 8px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 120px;
+        }
+
+        #chat-history {
+            flex: 1;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 6px;
+            padding: 6px;
+            font-size: 10px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            max-height: 140px;
+        }
+
+        .msg {
+            animation: slideIn 0.2s ease-out;
+            line-height: 1.3;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(3px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .msg-sender {
+            font-weight: bold;
+            margin-right: 4px;
+        }
+
+        .msg-system { color: var(--neon-magenta); }
+        .msg-you { color: var(--neon-white); }
+        .msg-Frog { color: var(--neon-green); }
+        .msg-Duck { color: var(--neon-yellow); }
+
+        .input-container {
+            display: flex;
+            gap: 4px;
+            margin-top: 6px;
+        }
+
+        #chat-input {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            padding: 5px 8px;
+            color: #ffffff;
+            font-size: 11px;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+
+        #chat-input:focus {
+            outline: none;
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 5px rgba(0, 240, 255, 0.25);
+        }
+
+        #btn-send {
+            flex: none;
+            width: 48px;
+            background: rgba(0, 240, 255, 0.1);
+            border-color: rgba(0, 240, 255, 0.2);
+            color: var(--neon-cyan);
+        }
+
+        #btn-send:hover {
+            background: rgba(0, 240, 255, 0.2);
+            border-color: rgba(0, 240, 255, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h3>Asciiquack Console</h3>
+        <div class="status-dot"></div>
+    </div>
+
+    <div id="screen-container">
+        <pre id="pond"></pre>
+    </div>
+
+    <div class="toolbar">
+        <button id="btn-feed">🌾 Feed</button>
+        <button id="btn-swap">🔄 Swap</button>
+        <button id="btn-hat">🎩 Hat</button>
+        <button id="btn-color">🎨 Color</button>
+        <button id="btn-chat">💬 Chat</button>
+    </div>
+
+    <div id="chat-container">
+        <div id="chat-history"></div>
+        <div class="input-container">
+            <input type="text" id="chat-input" placeholder="Talk to pond..." />
+            <button id="btn-send">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // Simulation Grid Settings
+        const gridWidth = 60;
+        let animHeight = 12; // 12 normally, 17 when chat is hidden
+
+        // Dynamic Classes
+        class Duck {
+            static ART_RIGHT = [
+                "      __",
+                "    <(o·)___",
+                "     (·····/",
+                "      `---'"
+            ];
+            static ART_LEFT = [
+                "      __",
+                "   ___(·o)>",
+                "   \\·····)",
+                "    `---'"
+            ];
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.targetX = x;
+                this.targetY = y;
+                this.width = 12;
+                this.height = 4;
+                this.facingRight = true;
+                this.name = "Duck";
+                this.sound = "Quack";
+            }
+            update(tick, boundsWidth, boundsHeight) {
+                let bobY = Math.sin(tick * 0.1) * 0.5;
+                let dx = (this.targetX - this.x) * 0.05;
+                let dy = (this.targetY - this.y) * 0.05;
+                this.x += dx;
+                this.y += dy + (bobY * 0.1);
+                if (dx > 0.01) this.facingRight = true;
+                else if (dx < -0.01) this.facingRight = false;
+                this.x = Math.max(0, Math.min(this.x, boundsWidth - this.width));
+                this.y = Math.max(0, Math.min(this.y, boundsHeight - this.height));
+            }
+            getArt() {
+                return this.facingRight ? Duck.ART_RIGHT : Duck.ART_LEFT;
+            }
+        }
+
+        class Frog {
+            static ART_RIGHT = [
+                "      (o)(o)    ",
+                "     (··u··)    ",
+                "    (········)  ",
+                "     `------'   "
+            ];
+            static ART_LEFT = [
+                "      (o)(o)    ",
+                "     (··u··)    ",
+                "    (········)  ",
+                "     `------'   "
+            ];
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.targetX = x;
+                this.targetY = y;
+                this.width = 16;
+                this.height = 4;
+                this.facingRight = true;
+                this.name = "Frog";
+                this.sound = "Ribbit";
+            }
+            update(tick, boundsWidth, boundsHeight) {
+                let bobY = Math.sin(tick * 0.1) * 0.5;
+                let dx = (this.targetX - this.x) * 0.05;
+                let dy = (this.targetY - this.y) * 0.05;
+                this.x += dx;
+                this.y += dy + (bobY * 0.1);
+                if (dx > 0.01) this.facingRight = true;
+                else if (dx < -0.01) this.facingRight = false;
+                this.x = Math.max(0, Math.min(this.x, boundsWidth - this.width));
+                this.y = Math.max(0, Math.min(this.y, boundsHeight - this.height));
+            }
+            getArt() {
+                return this.facingRight ? Frog.ART_RIGHT : Frog.ART_LEFT;
+            }
+        }
+
+        class Cloud {
+            static ART = [
+                "      .--.      ",
+                "   .-(····).    ",
+                "  (·········)   ",
+                "   `-------'    "
+            ];
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.width = 16;
+                this.height = 4;
+                this.speed = 0.03 + Math.random() * 0.06;
+            }
+            update(boundsWidth) {
+                this.x -= this.speed;
+                if (this.x < -this.width) {
+                    this.x = boundsWidth;
+                    this.speed = 0.03 + Math.random() * 0.06;
+                }
+            }
+            getArt() {
+                return Cloud.ART;
+            }
+        }
+
+        class Sun {
+            static FRAME_A = [
+                "      \\ | /      ",
+                "    .-'---'-.    ",
+                " --(··O·u·O··)-- ",
+                "    '-.---.-'    ",
+                "      / | \\      "
+            ];
+            static FRAME_B = [
+                "      \\ | /      ",
+                "    .-'---'-.    ",
+                " --(··-·u·O··)-- ",
+                "    '-.---.-'    ",
+                "      / | \\      "
+            ];
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.width = 17;
+                this.height = 5;
+            }
+            getArt(tick) {
+                if (Math.floor(tick / 20) % 2 === 0) {
+                    return Sun.FRAME_A;
+                }
+                return Sun.FRAME_B;
+            }
+        }
+
+        // Main App State
+        const App = {
+            tick: 0,
+            animals: [Duck, Frog],
+            animalIdx: 0,
+            animal: null,
+            color: "yellow",
+            hat: "None",
+            showConversation: true,
+            breadcrumbs: [],
+            clouds: [],
+            sun: null,
+            
+            colors: ["yellow", "green", "cyan", "magenta", "red", "white"],
+            hats: ["None", "Top Hat", "Cap", "Flower", "Crown", "Beret", "Wizard", "Bow"],
+            hatIdx: 0,
+
+            init() {
+                this.animal = new this.animals[this.animalIdx](10, 8);
+                this.sun = new Sun(Math.floor(Math.random() * 40), 1);
+                for (let i = 0; i < 2; i++) {
+                    this.clouds.push(new Cloud(Math.random() * 60, Math.random() * 3));
+                }
+                
+                // Add initial greeting
+                addMessage(this.animal.name, `${this.animal.sound}! Welcome to the VS Code sidebar pond!`);
+            },
+
+            toggleAnimal() {
+                const x = this.animal.x;
+                const y = this.animal.y;
+                this.animalIdx = (this.animalIdx + 1) % this.animals.length;
+                this.animal = new this.animals[this.animalIdx](x, y);
+                this.color = this.animal.name === "Frog" ? "green" : "yellow";
+                addMessage("System", `Switched to: ${this.animal.name}!`);
+                addMessage(this.animal.name, `${this.animal.sound}!`);
+            },
+
+            cycleColor() {
+                let idx = this.colors.indexOf(this.color);
+                this.color = this.colors[(idx + 1) % this.colors.length];
+                addMessage("System", `${this.animal.name} changed color to ${this.color}!`);
+            },
+
+            cycleHat() {
+                this.hatIdx = (this.hatIdx + 1) % this.hats.length;
+                this.hat = this.hats[this.hatIdx];
+                addMessage("System", `${this.animal.name} is now wearing: ${this.hat}!`);
+            },
+
+            feed() {
+                let waterLine = Math.floor(animHeight / 2);
+                let bx = Math.floor(Math.random() * gridWidth);
+                let by = waterLine + Math.floor(Math.random() * (animHeight - waterLine - 1));
+                this.breadcrumbs.push({ x: bx, y: by });
+                if (this.breadcrumbs.length > 20) {
+                    this.breadcrumbs.shift();
+                }
+                addMessage(this.animal.name, `${this.animal.sound}! (Happy munching)`);
+            },
+
+            toggleConversation() {
+                this.showConversation = !this.showConversation;
+                const chatContainer = document.getElementById('chat-container');
+                if (this.showConversation) {
+                    chatContainer.style.display = 'flex';
+                    animHeight = 12;
+                    addMessage("System", "Conversation is now shown!");
+                } else {
+                    chatContainer.style.display = 'none';
+                    animHeight = 17;
+                }
+            },
+
+            update() {
+                this.tick++;
+                
+                // Random Swim Target Selection
+                if (Math.random() < 0.01) {
+                    this.animal.targetX = Math.random() * (gridWidth - this.animal.width);
+                    let min_y = Math.floor(animHeight / 2) - 2;
+                    let max_y = animHeight - this.animal.height;
+                    this.animal.targetY = min_y + Math.random() * (max_y - min_y);
+                }
+
+                // Update entities
+                this.animal.update(this.tick, gridWidth, animHeight);
+                this.clouds.forEach(c => c.update(gridWidth));
+
+                // Eating breadcrumbs
+                const ax = Math.floor(this.animal.x);
+                const ay = Math.floor(this.animal.y);
+                let ateSome = false;
+                
+                this.breadcrumbs = this.breadcrumbs.filter(crumb => {
+                    let eaten = ax <= crumb.x && crumb.x < ax + this.animal.width && 
+                                ay <= crumb.y && crumb.y < ay + this.animal.height;
+                    if (eaten) ateSome = true;
+                    return !eaten;
+                });
+
+                if (ateSome) {
+                    addMessage(this.animal.name, "munch munch!");
+                }
+            }
+        };
+
+        // UI Chat Feed Logger
+        function addMessage(sender, text) {
+            const history = document.getElementById('chat-history');
+            const msgEl = document.createElement('div');
+            msgEl.className = 'msg';
+            
+            let senderClass = `msg-${sender}`;
+            if (sender !== "System" && sender !== "You") {
+                senderClass = `msg-${App.animal.name}`;
+            }
+
+            msgEl.innerHTML = `<span class="msg-sender ${senderClass}">${sender}:</span><span>${escapeHtml(text)}</span>`;
+            history.appendChild(msgEl);
+            history.scrollTop = history.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+        }
+
+        // Grid Rendering Engine
+        function render() {
+            let grid = Array.from({ length: animHeight }, () => 
+                Array.from({ length: gridWidth }, () => ({ char: ' ', className: 'sky' }))
+            );
+
+            let waveSurfaceBase = Math.floor(animHeight / 2);
+            let waveChars = ["~", "-", "_", "-"];
+
+            // 1. Render Sky & Water Background
+            for (let y = 0; y < animHeight; y++) {
+                for (let x = 0; x < gridWidth; x++) {
+                    let waveOffset = Math.floor(Math.sin(x * 0.1 + App.tick * 0.15) * 2);
+                    let isWater = y >= waveSurfaceBase + waveOffset;
+                    
+                    let char = ' ';
+                    let className = 'sky';
+                    
+                    if (isWater) {
+                        char = waveChars[Math.floor((x + App.tick) / 5) % waveChars.length];
+                        className = 'water';
+                    }
+                    
+                    grid[y][x] = { char, className };
+                }
+            }
+
+            // 2. Render Breadcrumbs
+            App.breadcrumbs.forEach(crumb => {
+                if (crumb.y < animHeight) {
+                    let isWater = grid[crumb.y][crumb.x].className === 'water';
+                    grid[crumb.y][crumb.x] = {
+                        char: '.',
+                        className: isWater ? 'crumb-water' : 'crumb'
+                    };
+                }
+            });
+
+            // 3. Render Clouds
+            App.clouds.forEach(cloud => {
+                let cart = cloud.getArt();
+                for (let y = 0; y < cart.length; y++) {
+                    let gy = Math.floor(cloud.y) + y;
+                    if (gy >= animHeight) continue;
+                    for (let x = 0; x < cart[y].length; x++) {
+                        let gx = Math.floor(cloud.x) + x;
+                        if (gx < 0 || gx >= gridWidth) continue;
+                        let char = cart[y][x];
+                        if (char === '·') {
+                            grid[gy][gx] = { char: ' ', className: 'sky' };
+                        } else if (char !== ' ') {
+                            grid[gy][gx] = { char: char, className: 'cloud' };
+                        }
+                    }
+                }
+            });
+
+            // 4. Render Sun
+            if (App.sun) {
+                let sart = App.sun.getArt(App.tick);
+                for (let y = 0; y < sart.length; y++) {
+                    let gy = App.sun.y + y;
+                    if (gy >= animHeight) continue;
+                    for (let x = 0; x < sart[y].length; x++) {
+                        let gx = App.sun.x + x;
+                        if (gx >= gridWidth) continue;
+                        let char = sart[y][x];
+                        if (char === '·') {
+                            grid[gy][gx] = { char: ' ', className: 'sun-bg' };
+                        } else if (char !== ' ') {
+                            grid[gy][gx] = { char: char, className: 'sun' };
+                        }
+                    }
+                }
+            }
+
+            // 5. Render Animal & Hat
+            let art = [...App.animal.getArt()];
+            if (App.hat === "Top Hat") {
+                art.unshift("      _|_", "     |___|");
+            } else if (App.hat === "Cap") {
+                art.unshift("      ___/");
+            } else if (App.hat === "Flower") {
+                art.unshift("       🌸");
+            } else if (App.hat === "Crown") {
+                art.unshift("      +w+ ");
+            } else if (App.hat === "Beret") {
+                art.unshift("      __* ", "     (___)");
+            } else if (App.hat === "Wizard") {
+                art.unshift("       ^  ", "      / \\ ", "     /___\\");
+            } else if (App.hat === "Bow") {
+                art.unshift("      🎀  ");
+            }
+
+            let ax = Math.floor(App.animal.x);
+            let bob = Math.sin(App.tick * 0.2) * 0.5;
+            let ay = Math.floor(App.animal.y + bob);
+            let hatHeight = art.length - 4;
+            ay = Math.max(0, ay - hatHeight);
+
+            for (let y = 0; y < art.length; y++) {
+                let gy = ay + y;
+                if (gy >= animHeight) continue;
+                for (let x = 0; x < art[y].length; x++) {
+                    let gx = ax + x;
+                    if (gx < 0 || gx >= gridWidth) continue;
+                    let char = art[y][x];
+                    if (char === '·') {
+                        grid[gy][gx] = { char: ' ', className: `animal ${App.color}` };
+                    } else if (char !== ' ') {
+                        grid[gy][gx] = { char: char, className: `animal ${App.color}` };
+                    }
+                }
+            }
+
+            // Convert grid cells to html spans
+            let html = "";
+            for (let y = 0; y < animHeight; y++) {
+                let rowHtml = "";
+                let currentClass = "";
+                let currentText = "";
+                
+                for (let x = 0; x < gridWidth; x++) {
+                    let cell = grid[y][x];
+                    if (cell.className !== currentClass) {
+                        if (currentText) {
+                            rowHtml += `<span class="${currentClass}">${escapeHtml(currentText)}</span>`;
+                        }
+                        currentClass = cell.className;
+                        currentText = cell.char;
+                    } else {
+                        currentText += cell.char;
+                    }
+                }
+                if (currentText) {
+                    rowHtml += `<span class="${currentClass}">${escapeHtml(currentText)}</span>`;
+                }
+                html += rowHtml + "\n";
+            }
+            document.getElementById('pond').innerHTML = html;
+        }
+
+        // Chatbot sound responses
+        function processSound(userMsg, animal) {
+            const sound = animal.sound;
+            const sounds = [
+                `${sound}!`, 
+                `${sound} ${sound.toLowerCase()}.`, 
+                `${sound.toUpperCase()}!`, 
+                `${sound}?`, 
+                `${sound}...`, 
+                `${sound}! ✨`
+            ];
+            
+            const randomChoice = (arr) => arr[Math.floor(Math.random() * arr.length)];
+            
+            if (userMsg.includes('?')) {
+                return randomChoice([
+                    `${sound}?`, 
+                    `${sound} ${sound.toLowerCase()}?`, 
+                    `${sound}... ${sound.toLowerCase()}?`
+                ]);
+            } else if (userMsg.includes('!') || (userMsg === userMsg.toUpperCase() && userMsg !== userMsg.toLowerCase())) {
+                return randomChoice([
+                    `${sound.toUpperCase()}!!`, 
+                    `${sound.toUpperCase()}!`, 
+                    `${sound} ${sound.toLowerCase()} ${sound.toLowerCase()}!!!`
+                ]);
+            } else if (userMsg.length > 50) {
+                return `${sound}... (nodding)`;
+            } else {
+                return randomChoice(sounds);
+            }
+        }
+
+        // Send chat message
+        function handleSend() {
+            const input = document.getElementById('chat-input');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            addMessage("You", msg);
+            input.value = "";
+
+            setTimeout(() => {
+                const reply = processSound(msg, App.animal);
+                addMessage(App.animal.name, reply);
+            }, 500);
+        }
+
+        // Keyboard navigation and layout bindings
+        document.getElementById('chat-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                handleSend();
+            }
+        });
+
+        document.getElementById('btn-send').addEventListener('click', handleSend);
+        document.getElementById('btn-feed').addEventListener('click', () => App.feed());
+        document.getElementById('btn-swap').addEventListener('click', () => App.toggleAnimal());
+        document.getElementById('btn-color').addEventListener('click', () => App.cycleColor());
+        document.getElementById('btn-hat').addEventListener('click', () => App.cycleHat());
+        document.getElementById('btn-chat').addEventListener('click', () => App.toggleConversation());
+
+        // Keyboard commands for body keyups (only when input is not focused)
+        document.addEventListener('keyup', (e) => {
+            if (document.activeElement.tagName === 'INPUT') return;
+            
+            const key = e.key.toLowerCase();
+            if (key === 'c') App.toggleConversation();
+            else if (key === 'f') App.feed();
+            else if (key === 'a') App.toggleAnimal();
+            else if (key === 'h') App.cycleHat();
+            else if (e.key === 'Tab') {
+                e.preventDefault();
+                App.cycleColor();
+            }
+        });
+
+        // Initialize and Start Game loop
+        App.init();
+        setInterval(() => {
+            App.update();
+            render();
+        }, 40); // 25 FPS
+    </script>
+</body>
+</html>
