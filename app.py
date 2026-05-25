@@ -33,7 +33,7 @@ class App:
             self.clouds.append(Cloud(random.uniform(0, 80), random.uniform(0, 5)))
             
         # The Sun
-        self.sun = Sun(60, 1)
+        self.sun = Sun(random.randint(0, 60), 1)
 
     def toggle_animal(self):
         # Save current position
