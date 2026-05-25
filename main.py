@@ -40,7 +40,7 @@ def main():
                 # Randomly change target to simulate "swimming around"
                 if random.random() < 0.01:
                     app.animal.target_x = random.uniform(0, width - app.animal.width)
-                    anim_height = (height * 3) // 4
+                    anim_height = (height * 3) // 4 if app.show_conversation else (height - 4)
                     # Animal is 4 rows high.
                     min_y = anim_height // 2 - 2
                     max_y = anim_height - app.animal.height

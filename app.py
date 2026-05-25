@@ -10,6 +10,7 @@ class App:
         self.messages: List[Tuple[str, str]] = []
         self.input_buffer: str = ""
         self.running: bool = True
+        self.show_conversation: bool = True
         
         # Available animals
         self.available_animals = [Duck, Frog]
@@ -50,6 +51,11 @@ class App:
         self.add_message("System", f"Switched to: {self.animal.name}!")
         self.add_message(self.animal.name, f"{self.animal.sound}!")
 
+    def toggle_conversation(self):
+        self.show_conversation = not self.show_conversation
+        status = "shown" if self.show_conversation else "hidden"
+        self.add_message("System", f"Conversation is now {status}!")
+
     def cycle_hat(self):
         self.hat_idx = (self.hat_idx + 1) % len(self.hats)
         self.hat = self.hats[self.hat_idx]
@@ -62,7 +68,7 @@ class App:
 
     def feed(self, width: int, height: int):
         import random
-        anim_height = (height * 3) // 4
+        anim_height = (height * 3) // 4 if self.show_conversation else (height - 4)
         water_line = anim_height // 2
         
         # Spawn breadcrumbs only in the water area
@@ -118,6 +124,8 @@ class App:
             self.feed(width, height)
         elif char.lower() == "a" and not self.input_buffer:
             self.toggle_animal()
+        elif char.lower() == "c" and not self.input_buffer:
+            self.toggle_conversation()
         elif char == "\r" or char == "\n":
             if self.input_buffer.strip():
                 self.add_message("You", self.input_buffer)

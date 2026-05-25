@@ -69,7 +69,10 @@ def draw_animal(app: App, width: int, height: int) -> str:
     
     # Use height - 1 to be absolutely safe
     height = height - 1
-    anim_height = (height * 3) // 4
+    if app.show_conversation:
+        anim_height = (height * 3) // 4
+    else:
+        anim_height = height - 3
     
     wave_surface_base = anim_height // 2
 
@@ -139,33 +142,34 @@ def draw_animal(app: App, width: int, height: int) -> str:
         frame_lines.append(row_str)
 
     # Chat area
-    chat_height = height - anim_height - 4
-    if chat_height < 1:
-        anim_height = max(1, height - 5)
-        chat_height = 1
+    if app.show_conversation:
+        chat_height = height - anim_height - 4
+        if chat_height < 1:
+            anim_height = max(1, height - 5)
+            chat_height = 1
 
-    frame_lines.append(COLORS["magenta"] + "─" * width + RESET_COLOR)
+        frame_lines.append(COLORS["magenta"] + "─" * width + RESET_COLOR)
 
-    recent_msgs = app.messages[-chat_height:]
-    for i in range(chat_height):
-        if i < len(recent_msgs):
-            sender, msg = recent_msgs[i]
-            # Color based on sender
-            if sender == "System":
-                s_color = COLORS["magenta"]
-            elif sender == "You":
-                s_color = COLORS["white"]
+        recent_msgs = app.messages[-chat_height:]
+        for i in range(chat_height):
+            if i < len(recent_msgs):
+                sender, msg = recent_msgs[i]
+                # Color based on sender
+                if sender == "System":
+                    s_color = COLORS["magenta"]
+                elif sender == "You":
+                    s_color = COLORS["white"]
+                else:
+                    s_color = COLORS["green"] if sender == "Frog" else COLORS["yellow"]
+                    
+                clean_msg = msg[:width - 15]
+                line = f"{COLORS['bold']}{s_color}{sender}:{RESET_COLOR} {clean_msg}"
+                frame_lines.append(line)
             else:
-                s_color = COLORS["green"] if sender == "Frog" else COLORS["yellow"]
-                
-            clean_msg = msg[:width - 15]
-            line = f"{COLORS['bold']}{s_color}{sender}:{RESET_COLOR} {clean_msg}"
-            frame_lines.append(line)
-        else:
-            frame_lines.append("")
+                frame_lines.append("")
 
     # Input area
-    footer = " (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal) "
+    footer = " (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal | C: Chat) "
     frame_lines.append(COLORS["green"] + "─" * width + RESET_COLOR)
 
     prompt = f"Talk to {app.animal.name}: "
@@ -186,7 +190,7 @@ def render_frame(app: App, width: int, height: int):
         output.append(move_to(i + 1, 1) + line + CLEAR_LINE)
     
     last_line_idx = len(lines)
-    footer = " (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal) "
+    footer = " (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal | C: Chat) "
     prompt = f"Talk to {app.animal.name}: "
     max_input = width - len(prompt) - len(footer) - 2
     display_input = app.input_buffer[-max_input:] if len(app.input_buffer) > max_input else app.input_buffer
