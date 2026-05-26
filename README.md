@@ -20,7 +20,7 @@ Talk to Frog/Duck (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal | C: Ch
 
 ![Asciiquack Screenshot](Screenshot.png)
 
-Inspired by the classic `asciiaquarium`, this app brings a peaceful, floating rubber companion right into your workspace. Run it as a **standalone Python TUI** in your terminal or install it as a **sidebar panel in VS Code** (similar to `vscode-pet`) for the ultimate companion programming experience! 💖
+Inspired by the classic `asciiaquarium`, this app brings a peaceful, floating rubber companion right into your workspace. Run it as a **standalone Python TUI** in your terminal or install the [Asciiquack VS Code Sidebar Extension](https://marketplace.visualstudio.com/items?itemName=SinsuSquid.asciiquack) for the ultimate companion programming experience! 💖
 
 ---
 
@@ -53,7 +53,10 @@ A native VS Code extension that renders the pond in a dedicated Webview View in 
 - **Responsive Layout:** The HTML rendering dynamically adjusts to fit your sidebar perfectly.
 - **Interactive UI Buttons:** Click buttons or use keyboard shortcuts to interact.
 
-#### Local VSIX Installation:
+#### 🛒 Marketplace Installation:
+Install it directly from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=SinsuSquid.asciiquack), or search for `Asciiquack` in the Extensions view (`Ctrl+Shift+X`) inside your editor!
+
+#### 📦 Local VSIX Installation:
 Install the pre-compiled extension bundle directly into VS Code:
 ```bash
 code --install-extension asciiquack-0.1.2.vsix
