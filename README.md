@@ -56,7 +56,7 @@ A native VS Code extension that renders the pond in a dedicated Webview View in 
 #### Local VSIX Installation:
 Install the pre-compiled extension bundle directly into VS Code:
 ```bash
-code --install-extension asciiquack-0.1.0.vsix
+code --install-extension asciiquack-0.1.2.vsix
 ```
 
 #### Launching in Development:
