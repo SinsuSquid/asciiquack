@@ -59,7 +59,7 @@ Install it directly from the [VS Code Marketplace](https://marketplace.visualstu
 #### 📦 Local VSIX Installation:
 Install the pre-compiled extension bundle directly into VS Code:
 ```bash
-code --install-extension asciiquack-0.1.2.vsix
+code --install-extension asciiquack-0.1.3.vsix
 ```
 
 #### Launching in Development:

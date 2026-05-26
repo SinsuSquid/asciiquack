@@ -588,26 +588,7 @@
                 }
             });
 
-            // 3. Render Clouds
-            App.clouds.forEach(cloud => {
-                let cart = cloud.getArt();
-                for (let y = 0; y < cart.length; y++) {
-                    let gy = Math.floor(cloud.y) + y;
-                    if (gy >= animHeight) continue;
-                    for (let x = 0; x < cart[y].length; x++) {
-                        let gx = Math.floor(cloud.x) + x;
-                        if (gx < 0 || gx >= gridWidth) continue;
-                        let char = cart[y][x];
-                        if (char === '·') {
-                            grid[gy][gx] = { char: ' ', className: 'sky' };
-                        } else if (char !== ' ') {
-                            grid[gy][gx] = { char: char, className: 'cloud' };
-                        }
-                    }
-                }
-            });
-
-            // 4. Render Sun
+            // 3. Render Sun
             if (App.sun) {
                 let sart = App.sun.getArt(App.tick);
                 for (let y = 0; y < sart.length; y++) {
@@ -625,6 +606,25 @@
                     }
                 }
             }
+
+            // 4. Render Clouds
+            App.clouds.forEach(cloud => {
+                let cart = cloud.getArt();
+                for (let y = 0; y < cart.length; y++) {
+                    let gy = Math.floor(cloud.y) + y;
+                    if (gy >= animHeight) continue;
+                    for (let x = 0; x < cart[y].length; x++) {
+                        let gx = Math.floor(cloud.x) + x;
+                        if (gx < 0 || gx >= gridWidth) continue;
+                        let char = cart[y][x];
+                        if (char === '·') {
+                            grid[gy][gx] = { char: ' ', className: 'sky' };
+                        } else if (char !== ' ') {
+                            grid[gy][gx] = { char: char, className: 'cloud' };
+                        }
+                    }
+                }
+            });
 
             // 5. Render Animal & Hat
             let art = [...App.animal.getArt()];

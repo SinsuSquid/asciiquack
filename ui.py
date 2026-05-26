@@ -93,23 +93,7 @@ def draw_animal(app: App, width: int, height: int) -> str:
                     row_str += animal_color + animal_char + RESET_COLOR
                     continue
 
-            # 2. Sun rendering
-            sx, sy = app.sun.x, app.sun.y
-            sart = app.sun.get_art()
-            if sy <= row_idx < sy + len(sart) and sx <= col_idx < sx + len(sart[0]):
-                sun_char = sart[row_idx - sy][col_idx - sx]
-                if sun_char == "·":
-                    row_str += sun_color + " " + RESET_COLOR
-                    continue
-                elif sun_char != " ":
-                    row_str += sun_color + sun_char + RESET_COLOR
-                    continue
-
-            # 3. Wave surface logic
-            wave_offset = int(math.sin(col_idx * 0.1 + app.animal.tick * 0.15) * 2)
-            is_water = row_idx >= wave_surface_base + wave_offset
-            
-            # 4. Cloud character
+            # 2. Cloud character
             cloud_char = None
             for cloud in app.clouds:
                 cx = int(cloud.x)
@@ -127,6 +111,22 @@ def draw_animal(app: App, width: int, height: int) -> str:
                 else:
                     row_str += cloud_color + cloud_char + RESET_COLOR
                 continue
+
+            # 3. Sun rendering
+            sx, sy = app.sun.x, app.sun.y
+            sart = app.sun.get_art()
+            if sy <= row_idx < sy + len(sart) and sx <= col_idx < sx + len(sart[0]):
+                sun_char = sart[row_idx - sy][col_idx - sx]
+                if sun_char == "·":
+                    row_str += sun_color + " " + RESET_COLOR
+                    continue
+                elif sun_char != " ":
+                    row_str += sun_color + sun_char + RESET_COLOR
+                    continue
+
+            # 4. Wave surface logic
+            wave_offset = int(math.sin(col_idx * 0.1 + app.animal.tick * 0.15) * 2)
+            is_water = row_idx >= wave_surface_base + wave_offset
 
             # 5. Default background
             color = water_color if is_water else COLORS["yellow"]
