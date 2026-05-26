@@ -20,7 +20,7 @@ Talk to Frog/Duck (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal | C: Ch
 
 ![Asciiquack Screenshot](Screenshot.png)
 
-Inspired by the classic `asciiaquarium`, this app brings a peaceful, floating rubber companion right into your workspace. Run it as a **standalone Python TUI** in your terminal or install the [Asciiquack VS Code Sidebar Extension](https://marketplace.visualstudio.com/items?itemName=SinsuSquid.asciiquack) for the ultimate companion programming experience! 💖
+Inspired by the classic `asciiaquarium`, this app brings a peaceful, floating rubber companion right into your workspace (featuring a special chibi frog mode for JY! 🐸💖). Run it as a **standalone Python TUI** in your terminal or install the [Asciiquack VS Code Sidebar Extension](https://marketplace.visualstudio.com/items?itemName=SinsuSquid.asciiquack) for the ultimate companion programming experience! 💖
 
 ---
 
@@ -50,7 +50,9 @@ Find your compiled binary in the `dist/` directory!
 A native VS Code extension that renders the pond in a dedicated Webview View in your Activity Bar. Re-coded in HTML/CSS/JS with:
 - **Cyberpunk Dark Theme:** Neon-green frogs, gold-yellow ducks, and glowing text shadows.
 - **CRT Scanline Effects:** A vintage digital screen texture overlaid on the pond.
-- **Responsive Layout:** The HTML rendering dynamically adjusts to fit your sidebar perfectly.
+- **Auto-fitting Horizontal Grid:** Automatically detects and scales the columns count (`gridWidth`) to match your VS Code sidebar width on resize, preventing horizontal scrollbars.
+- **Draggable Vertical Resizer:** Drag the bottom border handle up or down (showing a double-sided `ns-resize` cursor) to manually resize the animation row height!
+- **High-Performance Rendering:** Uses zero-allocation primitive arrays and a delta-time decoupled animation loop to keep waves running at a smooth, constant speed regardless of window scale.
 - **Interactive UI Buttons:** Click buttons or use keyboard shortcuts to interact.
 
 #### 🛒 Marketplace Installation:
@@ -59,7 +61,7 @@ Install it directly from the [VS Code Marketplace](https://marketplace.visualstu
 #### 📦 Local VSIX Installation:
 Install the pre-compiled extension bundle directly into VS Code:
 ```bash
-code --install-extension asciiquack-0.1.3.vsix
+code --install-extension asciiquack-0.1.4.vsix
 ```
 
 #### Launching in Development:

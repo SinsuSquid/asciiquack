@@ -169,6 +169,40 @@
             transform: scale(0.96);
         }
 
+        /* Resizer bar */
+        #resizer {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+            cursor: ns-resize;
+            margin-top: 6px;
+            margin-bottom: 2px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        #resizer:hover {
+            background: var(--neon-cyan);
+            box-shadow: 0 0 8px var(--neon-cyan);
+        }
+
+        #resizer::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 1px;
+            transition: all 0.2s ease;
+        }
+
+        #resizer:hover::after {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
         /* Chat Logs Area */
         #chat-container {
             margin-top: 10px;
@@ -263,6 +297,8 @@
         <pre id="pond"></pre>
     </div>
 
+    <div id="resizer" title="Drag vertically to resize pond height"></div>
+
     <div class="toolbar">
         <button id="btn-feed">🌾 Feed</button>
         <button id="btn-swap">🔄 Swap</button>
@@ -281,8 +317,9 @@
 
     <script>
         // Simulation Grid Settings
-        const gridWidth = 60;
-        let animHeight = 12; // 12 normally, 17 when chat is hidden
+        let gridWidth = 60;
+        let customAnimHeight = 12;
+        let animHeight = 12; // Adjusted dynamically based on customAnimHeight and chat visibility
 
         // Dynamic Classes
         class Duck {
@@ -309,12 +346,13 @@
                 this.name = "Duck";
                 this.sound = "Quack";
             }
-            update(tick, boundsWidth, boundsHeight) {
+            update(tick, boundsWidth, boundsHeight, deltaTicks = 1) {
                 let bobY = Math.sin(tick * 0.1) * 0.5;
-                let dx = (this.targetX - this.x) * 0.05;
-                let dy = (this.targetY - this.y) * 0.05;
+                let easeFactor = 1 - Math.pow(1 - 0.05, deltaTicks);
+                let dx = (this.targetX - this.x) * easeFactor;
+                let dy = (this.targetY - this.y) * easeFactor;
                 this.x += dx;
-                this.y += dy + (bobY * 0.1);
+                this.y += dy + (bobY * 0.1 * deltaTicks);
                 if (dx > 0.01) this.facingRight = true;
                 else if (dx < -0.01) this.facingRight = false;
                 this.x = Math.max(0, Math.min(this.x, boundsWidth - this.width));
@@ -349,12 +387,13 @@
                 this.name = "Frog";
                 this.sound = "Ribbit";
             }
-            update(tick, boundsWidth, boundsHeight) {
+            update(tick, boundsWidth, boundsHeight, deltaTicks = 1) {
                 let bobY = Math.sin(tick * 0.1) * 0.5;
-                let dx = (this.targetX - this.x) * 0.05;
-                let dy = (this.targetY - this.y) * 0.05;
+                let easeFactor = 1 - Math.pow(1 - 0.05, deltaTicks);
+                let dx = (this.targetX - this.x) * easeFactor;
+                let dy = (this.targetY - this.y) * easeFactor;
                 this.x += dx;
-                this.y += dy + (bobY * 0.1);
+                this.y += dy + (bobY * 0.1 * deltaTicks);
                 if (dx > 0.01) this.facingRight = true;
                 else if (dx < -0.01) this.facingRight = false;
                 this.x = Math.max(0, Math.min(this.x, boundsWidth - this.width));
@@ -379,8 +418,8 @@
                 this.height = 4;
                 this.speed = 0.03 + Math.random() * 0.06;
             }
-            update(boundsWidth) {
-                this.x -= this.speed;
+            update(boundsWidth, deltaTicks = 1) {
+                this.x -= this.speed * deltaTicks;
                 if (this.x < -this.width) {
                     this.x = boundsWidth;
                     this.speed = 0.03 + Math.random() * 0.06;
@@ -439,9 +478,9 @@
 
             init() {
                 this.animal = new this.animals[this.animalIdx](10, 8);
-                this.sun = new Sun(Math.floor(Math.random() * 40), 1);
+                this.sun = new Sun(Math.floor(Math.random() * (gridWidth - 17)), 1);
                 for (let i = 0; i < 2; i++) {
-                    this.clouds.push(new Cloud(Math.random() * 60, Math.random() * 3));
+                    this.clouds.push(new Cloud(Math.random() * gridWidth, Math.random() * 3));
                 }
                 
                 // Add initial greeting
@@ -486,19 +525,19 @@
                 const chatContainer = document.getElementById('chat-container');
                 if (this.showConversation) {
                     chatContainer.style.display = 'flex';
-                    animHeight = 12;
+                    updateAnimHeight();
                     addMessage("System", "Conversation is now shown!");
                 } else {
                     chatContainer.style.display = 'none';
-                    animHeight = 17;
+                    updateAnimHeight();
                 }
             },
 
-            update() {
-                this.tick++;
+            update(deltaTicks = 1) {
+                this.tick += deltaTicks;
                 
                 // Random Swim Target Selection
-                if (Math.random() < 0.01) {
+                if (Math.random() < 0.01 * deltaTicks) {
                     this.animal.targetX = Math.random() * (gridWidth - this.animal.width);
                     let min_y = Math.floor(animHeight / 2) - 2;
                     let max_y = animHeight - this.animal.height;
@@ -506,8 +545,8 @@
                 }
 
                 // Update entities
-                this.animal.update(this.tick, gridWidth, animHeight);
-                this.clouds.forEach(c => c.update(gridWidth));
+                this.animal.update(this.tick, gridWidth, animHeight, deltaTicks);
+                this.clouds.forEach(c => c.update(gridWidth, deltaTicks));
 
                 // Eating breadcrumbs
                 const ax = Math.floor(this.animal.x);
@@ -552,9 +591,8 @@
 
         // Grid Rendering Engine
         function render() {
-            let grid = Array.from({ length: animHeight }, () => 
-                Array.from({ length: gridWidth }, () => ({ char: ' ', className: 'sky' }))
-            );
+            let gridChar = Array.from({ length: animHeight }, () => new Array(gridWidth).fill(' '));
+            let gridClass = Array.from({ length: animHeight }, () => new Array(gridWidth).fill('sky'));
 
             let waveSurfaceBase = Math.floor(animHeight / 2);
             let waveChars = ["~", "-", "_", "-"];
@@ -565,26 +603,19 @@
                     let waveOffset = Math.floor(Math.sin(x * 0.1 + App.tick * 0.15) * 2);
                     let isWater = y >= waveSurfaceBase + waveOffset;
                     
-                    let char = ' ';
-                    let className = 'sky';
-                    
                     if (isWater) {
-                        char = waveChars[Math.floor((x + App.tick) / 5) % waveChars.length];
-                        className = 'water';
+                        gridChar[y][x] = waveChars[Math.floor((x + App.tick) / 5) % waveChars.length];
+                        gridClass[y][x] = 'water';
                     }
-                    
-                    grid[y][x] = { char, className };
                 }
             }
 
             // 2. Render Breadcrumbs
             App.breadcrumbs.forEach(crumb => {
-                if (crumb.y < animHeight) {
-                    let isWater = grid[crumb.y][crumb.x].className === 'water';
-                    grid[crumb.y][crumb.x] = {
-                        char: '.',
-                        className: isWater ? 'crumb-water' : 'crumb'
-                    };
+                if (crumb.y < animHeight && crumb.x < gridWidth) {
+                    let isWater = gridClass[crumb.y][crumb.x] === 'water';
+                    gridChar[crumb.y][crumb.x] = '.';
+                    gridClass[crumb.y][crumb.x] = isWater ? 'crumb-water' : 'crumb';
                 }
             });
 
@@ -599,9 +630,11 @@
                         if (gx >= gridWidth) continue;
                         let char = sart[y][x];
                         if (char === '·') {
-                            grid[gy][gx] = { char: ' ', className: 'sun-bg' };
+                            gridChar[gy][gx] = ' ';
+                            gridClass[gy][gx] = 'sun-bg';
                         } else if (char !== ' ') {
-                            grid[gy][gx] = { char: char, className: 'sun' };
+                            gridChar[gy][gx] = char;
+                            gridClass[gy][gx] = 'sun';
                         }
                     }
                 }
@@ -618,9 +651,11 @@
                         if (gx < 0 || gx >= gridWidth) continue;
                         let char = cart[y][x];
                         if (char === '·') {
-                            grid[gy][gx] = { char: ' ', className: 'sky' };
+                            gridChar[gy][gx] = ' ';
+                            gridClass[gy][gx] = 'sky';
                         } else if (char !== ' ') {
-                            grid[gy][gx] = { char: char, className: 'cloud' };
+                            gridChar[gy][gx] = char;
+                            gridClass[gy][gx] = 'cloud';
                         }
                     }
                 }
@@ -658,9 +693,11 @@
                     if (gx < 0 || gx >= gridWidth) continue;
                     let char = art[y][x];
                     if (char === '·') {
-                        grid[gy][gx] = { char: ' ', className: `animal ${App.color}` };
+                        gridChar[gy][gx] = ' ';
+                        gridClass[gy][gx] = `animal ${App.color}`;
                     } else if (char !== ' ') {
-                        grid[gy][gx] = { char: char, className: `animal ${App.color}` };
+                        gridChar[gy][gx] = char;
+                        gridClass[gy][gx] = `animal ${App.color}`;
                     }
                 }
             }
@@ -673,15 +710,16 @@
                 let currentText = "";
                 
                 for (let x = 0; x < gridWidth; x++) {
-                    let cell = grid[y][x];
-                    if (cell.className !== currentClass) {
+                    let char = gridChar[y][x];
+                    let className = gridClass[y][x];
+                    if (className !== currentClass) {
                         if (currentText) {
                             rowHtml += `<span class="${currentClass}">${escapeHtml(currentText)}</span>`;
                         }
-                        currentClass = cell.className;
-                        currentText = cell.char;
+                        currentClass = className;
+                        currentText = char;
                     } else {
-                        currentText += cell.char;
+                        currentText += char;
                     }
                 }
                 if (currentText) {
@@ -754,6 +792,101 @@
         document.getElementById('btn-hat').addEventListener('click', () => App.cycleHat());
         document.getElementById('btn-chat').addEventListener('click', () => App.toggleConversation());
 
+        function updateAnimHeight() {
+            animHeight = App.showConversation ? customAnimHeight : customAnimHeight + 5;
+            if (App.animal) {
+                let min_y = Math.floor(animHeight / 2) - 2;
+                let max_y = animHeight - App.animal.height;
+                App.animal.y = Math.max(0, Math.min(App.animal.y, max_y));
+                App.animal.targetY = Math.max(min_y, Math.min(App.animal.targetY, max_y));
+            }
+        }
+
+        document.getElementById('resizer').addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            const startY = e.clientY;
+            const startHeight = customAnimHeight;
+            
+            const tempSpan = document.createElement('span');
+            tempSpan.style.fontFamily = "var(--vscode-editor-font-family), 'Consolas', 'Courier New', monospace";
+            tempSpan.style.fontSize = "9px";
+            tempSpan.style.lineHeight = "1.1";
+            tempSpan.style.whiteSpace = "pre";
+            tempSpan.style.visibility = "hidden";
+            tempSpan.style.position = "absolute";
+            tempSpan.textContent = 'A';
+            document.body.appendChild(tempSpan);
+            const charHeight = tempSpan.getBoundingClientRect().height || 10;
+            document.body.removeChild(tempSpan);
+
+            function onMouseMove(moveEvent) {
+                const deltaY = moveEvent.clientY - startY;
+                const deltaRows = Math.round(deltaY / charHeight);
+                let newHeight = startHeight + deltaRows;
+                if (newHeight < 8) newHeight = 8;
+                if (newHeight > 25) newHeight = 25;
+                if (newHeight !== customAnimHeight) {
+                    customAnimHeight = newHeight;
+                    updateAnimHeight();
+                    render();
+                }
+            }
+
+            function onMouseUp() {
+                window.removeEventListener('mousemove', onMouseMove);
+                window.removeEventListener('mouseup', onMouseUp);
+            }
+
+            window.addEventListener('mousemove', onMouseMove);
+            window.addEventListener('mouseup', onMouseUp);
+        });
+
+        let lastContainerWidth = 0;
+        function updateGridWidth() {
+            const container = document.getElementById('screen-container');
+            const pond = document.getElementById('pond');
+            if (!container || !pond) return;
+
+            const currentWidth = container.clientWidth;
+            if (currentWidth === lastContainerWidth) return;
+            lastContainerWidth = currentWidth;
+
+            const tempSpan = document.createElement('span');
+            tempSpan.style.fontFamily = "var(--vscode-editor-font-family), 'Consolas', 'Courier New', monospace";
+            tempSpan.style.fontSize = "9px";
+            tempSpan.style.lineHeight = "1.1";
+            tempSpan.style.whiteSpace = "pre";
+            tempSpan.style.visibility = "hidden";
+            tempSpan.style.position = "absolute";
+            tempSpan.textContent = 'A';
+            document.body.appendChild(tempSpan);
+            const charWidth = tempSpan.getBoundingClientRect().width || 5.4;
+            document.body.removeChild(tempSpan);
+
+            const style = window.getComputedStyle(container);
+            const paddingLeft = parseFloat(style.paddingLeft) || 8;
+            const paddingRight = parseFloat(style.paddingRight) || 8;
+            const availableWidth = container.clientWidth - paddingLeft - paddingRight;
+
+            let cols = Math.floor(availableWidth / charWidth);
+            if (cols < 40) cols = 40;
+            
+            gridWidth = cols;
+
+            if (App.animal) {
+                App.animal.x = Math.max(0, Math.min(App.animal.x, gridWidth - App.animal.width));
+                App.animal.targetX = Math.max(0, Math.min(App.animal.targetX, gridWidth - App.animal.width));
+            }
+            if (App.sun) {
+                App.sun.x = Math.max(0, Math.min(App.sun.x, gridWidth - App.sun.width));
+            }
+            App.clouds.forEach(cloud => {
+                if (cloud.x > gridWidth) {
+                    cloud.x = gridWidth;
+                }
+            });
+        }
+
         // Keyboard commands for body keyups (only when input is not focused)
         document.addEventListener('keyup', (e) => {
             if (document.activeElement.tagName === 'INPUT') return;
@@ -770,9 +903,23 @@
         });
 
         // Initialize and Start Game loop
+        updateGridWidth();
         App.init();
+
+        window.addEventListener('resize', () => {
+            updateGridWidth();
+            render();
+        });
+
+        let lastTime = performance.now();
         setInterval(() => {
-            App.update();
+            const now = performance.now();
+            const deltaMs = now - lastTime;
+            lastTime = now;
+            
+            // Limit deltaTicks to a maximum of 5 to avoid huge jumps on tab wake
+            const deltaTicks = Math.min(5, deltaMs / 40);
+            App.update(deltaTicks);
             render();
         }, 40); // 25 FPS
     </script>
