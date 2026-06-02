@@ -15,7 +15,7 @@ A lightweight, zero-dependency terminal rubber-companion and **VS Code Sidebar E
      (     /       (        )   -  _  -  ~  -
       `---'         `------'    _  -  ~  -  _
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Talk to Frog/Duck (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal | C: Chat): _
+Talk to Frog/Duck (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal | C: Chat | M: Menu): _
 ```
 
 ![Asciiquack Screenshot](Screenshot.png)
@@ -84,6 +84,7 @@ The following keybindings work in both **TUI Mode** and **VS Code Extension Mode
 | **`F`** / **🌾 Feed** | Feed breadcrumbs to the pond 🥨 |
 | **`A`** / **🔄 Swap** | Switch between animal species (**Duck ↔ Frog**) |
 | **`C`** / **💬 Chat** | **Toggle Conversation Log:** Hides the console log and dynamically expands the pond animation height! |
+| **`M`** / **🗺️ Menu** | **Toggle Menu:** Hides/shows the menu bar containing all keyboard shortcuts at the bottom of the screen! (TUI Mode only) |
 | **`ESC`** | Exit the pond safely (TUI Mode only) |
 
 ---

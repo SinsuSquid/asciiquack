@@ -12,6 +12,8 @@ class App:
         self.running: bool = True
         self.show_conversation: bool = True
         
+        self.show_menu: bool = True
+        
         # Available animals
         self.available_animals = [Duck, Frog]
         self.animal_idx = 0
@@ -55,6 +57,11 @@ class App:
         self.show_conversation = not self.show_conversation
         status = "shown" if self.show_conversation else "hidden"
         self.add_message("System", f"Conversation is now {status}!")
+
+    def toggle_menu(self):
+        self.show_menu = not self.show_menu
+        status = "shown" if self.show_menu else "hidden"
+        self.add_message("System", f"Menu is now {status}!")
 
     def cycle_hat(self):
         self.hat_idx = (self.hat_idx + 1) % len(self.hats)
@@ -126,6 +133,8 @@ class App:
             self.toggle_animal()
         elif char.lower() == "c" and not self.input_buffer:
             self.toggle_conversation()
+        elif char.lower() == "m" and not self.input_buffer:
+            self.toggle_menu()
         elif char == "\r" or char == "\n":
             if self.input_buffer.strip():
                 self.add_message("You", self.input_buffer)

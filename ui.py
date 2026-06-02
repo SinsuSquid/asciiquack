@@ -169,7 +169,7 @@ def draw_animal(app: App, width: int, height: int) -> str:
                 frame_lines.append("")
 
     # Input area
-    footer = " (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal | C: Chat) "
+    footer = " (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal | C: Chat | M: Menu) " if app.show_menu else ""
     frame_lines.append(COLORS["green"] + "─" * width + RESET_COLOR)
 
     prompt = f"Talk to {app.animal.name}: "
@@ -190,7 +190,7 @@ def render_frame(app: App, width: int, height: int):
         output.append(move_to(i + 1, 1) + line + CLEAR_LINE)
     
     last_line_idx = len(lines)
-    footer = " (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal | C: Chat) "
+    footer = " (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal | C: Chat | M: Menu) " if app.show_menu else ""
     prompt = f"Talk to {app.animal.name}: "
     max_input = width - len(prompt) - len(footer) - 2
     display_input = app.input_buffer[-max_input:] if len(app.input_buffer) > max_input else app.input_buffer
