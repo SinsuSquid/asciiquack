@@ -69,10 +69,19 @@ def draw_animal(app: App, width: int, height: int) -> str:
     
     # Use height - 1 to be absolutely safe
     height = height - 1
+    
+    menu_reserved = 2 if app.show_menu else 0
+
     if app.show_conversation:
-        anim_height = (height * 3) // 4
+        remaining_height = height - 1 - menu_reserved
+        anim_height = (remaining_height * 3) // 4
+        chat_height = remaining_height - anim_height - 1
+        if chat_height < 1:
+            anim_height = max(1, remaining_height - 2)
+            chat_height = 1
     else:
-        anim_height = height - 3
+        anim_height = height - 1 - menu_reserved
+        chat_height = 0
     
     wave_surface_base = anim_height // 2
 
@@ -142,12 +151,7 @@ def draw_animal(app: App, width: int, height: int) -> str:
         frame_lines.append(row_str)
 
     # Chat area
-    if app.show_conversation:
-        chat_height = height - anim_height - 4
-        if chat_height < 1:
-            anim_height = max(1, height - 5)
-            chat_height = 1
-
+    if app.show_conversation and chat_height > 0:
         frame_lines.append(COLORS["magenta"] + "─" * width + RESET_COLOR)
 
         recent_msgs = app.messages[-chat_height:]
@@ -169,14 +173,15 @@ def draw_animal(app: App, width: int, height: int) -> str:
                 frame_lines.append("")
 
     # Input area
-    footer = " (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal | C: Chat | M: Menu) " if app.show_menu else ""
-    frame_lines.append(COLORS["green"] + "─" * width + RESET_COLOR)
+    if app.show_menu:
+        footer = " (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal | C: Chat | M: Menu) "
+        frame_lines.append(COLORS["green"] + "─" * width + RESET_COLOR)
 
-    prompt = f"Talk to {app.animal.name}: "
-    max_input = width - len(prompt) - len(footer) - 2
-    display_input = app.input_buffer[-max_input:] if len(app.input_buffer) > max_input else app.input_buffer
-    input_line = f"{COLORS['white']}{prompt}{footer}{display_input}"
-    frame_lines.append(input_line)
+        prompt = f"Talk to {app.animal.name}: "
+        max_input = width - len(prompt) - len(footer) - 2
+        display_input = app.input_buffer[-max_input:] if len(app.input_buffer) > max_input else app.input_buffer
+        input_line = f"{COLORS['white']}{prompt}{footer}{display_input}"
+        frame_lines.append(input_line)
 
     return frame_lines[:height-1]
 
@@ -184,21 +189,28 @@ def render_frame(app: App, width: int, height: int):
     import sys
     sys.stdout.write(HIDE_CURSOR)
     
+    if app.needs_clear:
+        sys.stdout.write(CLEAR_SCREEN + CURSOR_HOME)
+        app.needs_clear = False
+        
     lines = draw_animal(app, width, height)
     output = []
     for i, line in enumerate(lines):
         output.append(move_to(i + 1, 1) + line + CLEAR_LINE)
     
-    last_line_idx = len(lines)
-    footer = " (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal | C: Chat | M: Menu) " if app.show_menu else ""
-    prompt = f"Talk to {app.animal.name}: "
-    max_input = width - len(prompt) - len(footer) - 2
-    display_input = app.input_buffer[-max_input:] if len(app.input_buffer) > max_input else app.input_buffer
-    
-    cursor_col = len(prompt) + len(footer) + len(display_input) + 1
-    
-    output.append(move_to(last_line_idx, cursor_col))
-    output.append(SHOW_CURSOR)
+    if app.show_menu:
+        last_line_idx = len(lines)
+        footer = " (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal | C: Chat | M: Menu) "
+        prompt = f"Talk to {app.animal.name}: "
+        max_input = width - len(prompt) - len(footer) - 2
+        display_input = app.input_buffer[-max_input:] if len(app.input_buffer) > max_input else app.input_buffer
+        
+        cursor_col = len(prompt) + len(footer) + len(display_input) + 1
+        
+        output.append(move_to(last_line_idx, cursor_col))
+        output.append(SHOW_CURSOR)
+    else:
+        output.append(HIDE_CURSOR)
     
     sys.stdout.write("".join(output))
     sys.stdout.flush()

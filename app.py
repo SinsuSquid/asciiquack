@@ -11,8 +11,8 @@ class App:
         self.input_buffer: str = ""
         self.running: bool = True
         self.show_conversation: bool = True
-        
         self.show_menu: bool = True
+        self.needs_clear: bool = False
         
         # Available animals
         self.available_animals = [Duck, Frog]
@@ -57,11 +57,13 @@ class App:
         self.show_conversation = not self.show_conversation
         status = "shown" if self.show_conversation else "hidden"
         self.add_message("System", f"Conversation is now {status}!")
+        self.needs_clear = True
 
     def toggle_menu(self):
         self.show_menu = not self.show_menu
         status = "shown" if self.show_menu else "hidden"
         self.add_message("System", f"Menu is now {status}!")
+        self.needs_clear = True
 
     def cycle_hat(self):
         self.hat_idx = (self.hat_idx + 1) % len(self.hats)
