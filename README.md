@@ -3,17 +3,16 @@
 A lightweight, zero-dependency terminal rubber-companion and **VS Code Sidebar Extension** for debugging, drifting, and dreaming.
 
 ```
-  ☀  *  .  *  .  *  .  *     .---.  *  .  *  .  *
-        \ | /  .  *  .  *    (     )  .  *  .  *
-      .-'---'-.  *  .  *  .   `---'  *  .  *  .  *
-   --(  O u O )-- .  *  .  v  .  *  .  *  .  *  .
-      '-.---.-'  *  .  *  .  *  .  *  .  *  .  *
-        / | \  .  *  .  *  .  *  .  *  .  *  .
+      \ | /              .--.
+    .-'---'-.         .-(    ).
+ --(  O u O  )--     (        )
+    '-.---.-'          `------'
+      / | \
 
-      (o)(o)                               __
-     (  u  )   ~  ≈  ∽  ~  ≈  ∽  ~  ≈  <(o·)___
-   (        )  ≈  ∽  ~  ≈  ∽  ~  ≈  ∽   (·····/
-    `------'   ∽  ~  ≈  ∽  ~  ≈  ∽  ~    `---'
+    (o)(o)                               __
+   (  u  )   ~  ≈  ∽  ~  ≈  ∽  ~  ≈  <(o·)___
+ (        )  ≈  ∽  ~  ≈  ∽  ~  ≈  ∽   (·····/
+  `------'   ∽  ~  ≈  ∽  ~  ≈  ∽  ~    `---'
 ```
 
 Inspired by the classic `asciiaquarium`, this app brings a peaceful, floating rubber companion right into your workspace (featuring a special chibi frog mode for JY! 🐸💖). Run it as a **standalone Python TUI** in your terminal or install the [Asciiquack VS Code Sidebar Extension](https://marketplace.visualstudio.com/items?itemName=SinsuSquid.asciiquack) for the ultimate companion programming experience! 💖
@@ -50,6 +49,8 @@ A native VS Code extension that renders the pond in a dedicated Webview View in 
 - **Draggable Vertical Resizer:** Drag the bottom border handle up or down (showing a double-sided `ns-resize` cursor) to manually resize the animation row height!
 - **High-Performance Rendering:** Uses zero-allocation primitive arrays and a delta-time decoupled animation loop to keep waves running at a smooth, constant speed regardless of window scale.
 - **Interactive UI Buttons:** Click buttons or use keyboard shortcuts to interact.
+
+![Asciiquack Screenshot](Screenshot.png)
 
 #### 🛒 Marketplace Installation:
 Install it directly from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=SinsuSquid.asciiquack), or search for `Asciiquack` in the Extensions view (`Ctrl+Shift+X`) inside your editor!
