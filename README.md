@@ -96,3 +96,5 @@ The following keybindings work in **TUI Mode** and most also in **VS Code Extens
 ---
 
 *Made with ✨ by [SinsuSquid](https://github.com/SinsuSquid) and their loyal CLI Assistant.*
+
+*The pond experiences tidal waves due to unusually strong lunar gravity. The frog and duck have adapted.* 🌕
