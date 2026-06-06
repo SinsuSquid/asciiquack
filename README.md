@@ -3,19 +3,17 @@
 A lightweight, zero-dependency terminal rubber-companion and **VS Code Sidebar Extension** for debugging, drifting, and dreaming.
 
 ```
-  ☀  *  .  *  .  v  v  .  *  .   .--.   .  *  .  *
-        \ | /   *  .  *  .  .(      ).  .  *  .
-      .-'---'-.    .  *  . -(        )- *  .  *  .
-   --(  O u O )-- *  .  *  .`--------' .  *  .  *
-      '-.---.-'  .  *  .  *  .  *  .  *  .  *  .
-        / | \  *  .  *  .  *  .  *  .  *  .  *
+  ☀  *  .  *  .  *  .  *     .---.  *  .  *  .  *
+        \ | /  .  *  .  *    (     )  .  *  .  *
+      .-'---'-.  *  .  *  .   `---'  *  .  *  .  *
+   --(  O u O )-- .  *  .  v  .  *  .  *  .  *  .
+      '-.---.-'  *  .  *  .  *  .  *  .  *  .  *
+        / | \  .  *  .  *  .  *  .  *  .  *  .
 
       (o)(o)                               __
      (  u  )   ~  ≈  ∽  ~  ≈  ∽  ~  ≈  <(o·)___
    (        )  ≈  ∽  ~  ≈  ∽  ~  ≈  ∽   (·····/
     `------'   ∽  ~  ≈  ∽  ~  ≈  ∽  ~    `---'
-  ─────────────────────────────────────────────────
-   Talk to Frog/Duck (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal | C: Chat | M: Menu): _
 ```
 
 Inspired by the classic `asciiaquarium`, this app brings a peaceful, floating rubber companion right into your workspace (featuring a special chibi frog mode for JY! 🐸💖). Run it as a **standalone Python TUI** in your terminal or install the [Asciiquack VS Code Sidebar Extension](https://marketplace.visualstudio.com/items?itemName=SinsuSquid.asciiquack) for the ultimate companion programming experience! 💖
