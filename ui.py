@@ -1,3 +1,4 @@
+import sys
 import math
 from app import App
 
@@ -186,7 +187,6 @@ def draw_animal(app: App, width: int, height: int) -> str:
     return frame_lines[:height-1]
 
 def render_frame(app: App, width: int, height: int):
-    import sys
     sys.stdout.write(HIDE_CURSOR)
     
     if app.needs_clear:

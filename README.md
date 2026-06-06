@@ -3,22 +3,20 @@
 A lightweight, zero-dependency terminal rubber-companion and **VS Code Sidebar Extension** for debugging, drifting, and dreaming.
 
 ```
-      \ | /
-    .-'---'-.
- --(   O u O   )--      .--.
-    '-.---.-'        .-(    ).
-      / | \         (         )
-                     `-------'
+  ☀  *  .  *  .  v  v  .  *  .   .--.   .  *  .  *
+        \ | /   *  .  *  .  .(      ).  .  *  .
+      .-'---'-.    .  *  . -(        )- *  .  *  .
+   --(  O u O )-- *  .  *  .`--------' .  *  .  *
+      '-.---.-'  .  *  .  *  .  *  .  *  .  *  .
+        / | \  *  .  *  .  *  .  *  .  *  .  *
 
-      __             (o)(o)
-    <(o )___        (  u   )    ~  -  _  -  ~
-     (     /       (        )   -  _  -  ~  -
-      `---'         `------'    _  -  ~  -  _
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Talk to Frog/Duck (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal | C: Chat | M: Menu): _
+      (o)(o)                               __
+     (  u  )   ~  ≈  ∽  ~  ≈  ∽  ~  ≈  <(o·)___
+   (        )  ≈  ∽  ~  ≈  ∽  ~  ≈  ∽   (·····/
+    `------'   ∽  ~  ≈  ∽  ~  ≈  ∽  ~    `---'
+  ─────────────────────────────────────────────────
+   Talk to Frog/Duck (ESC: Quit | TAB: Color | H: Hat | F: Feed | A: Animal | C: Chat | M: Menu): _
 ```
-
-![Asciiquack Screenshot](Screenshot.png)
 
 Inspired by the classic `asciiaquarium`, this app brings a peaceful, floating rubber companion right into your workspace (featuring a special chibi frog mode for JY! 🐸💖). Run it as a **standalone Python TUI** in your terminal or install the [Asciiquack VS Code Sidebar Extension](https://marketplace.visualstudio.com/items?itemName=SinsuSquid.asciiquack) for the ultimate companion programming experience! 💖
 
@@ -27,7 +25,7 @@ Inspired by the classic `asciiaquarium`, this app brings a peaceful, floating ru
 ## 🚀 Modes of Operation
 
 ### 📺 1. TUI Mode (Terminal User Interface)
-Built entirely in Python 3.13 using the standard library and raw ANSI escape codes. Extremely lightweight, fast, and runs in any terminal emulator.
+Built entirely in Python 3.14+ using the standard library and raw ANSI escape codes. Extremely lightweight, fast, and runs in any terminal emulator.
 
 #### Quick Start:
 ```bash
@@ -74,7 +72,7 @@ code --install-extension asciiquack-0.1.4.vsix
 
 ## 🎮 Controls & Shortcuts
 
-The following keybindings work in both **TUI Mode** and **VS Code Extension Mode** (when the input field is not focused in the extension):
+The following keybindings work in **TUI Mode** and most also in **VS Code Extension Mode** (when the input field is not focused). Keys marked *(TUI only)* apply exclusively to the terminal app:
 
 | Key / Control | Action |
 | :--- | :--- |
@@ -84,16 +82,16 @@ The following keybindings work in both **TUI Mode** and **VS Code Extension Mode
 | **`F`** / **🌾 Feed** | Feed breadcrumbs to the pond 🥨 |
 | **`A`** / **🔄 Swap** | Switch between animal species (**Duck ↔ Frog**) |
 | **`C`** / **💬 Chat** | **Toggle Conversation Log:** Hides the console log and dynamically expands the pond animation height! |
-| **`M`** / **🗺️ Menu** | **Toggle Menu:** Hides/shows the menu bar containing all keyboard shortcuts at the bottom of the screen! (TUI Mode only) |
-| **`ESC`** | Exit the pond safely (TUI Mode only) |
+| **`M`** / **🗺️ Menu** | **Toggle Menu:** Hides/shows the menu bar and expands the animation to full screen! *(TUI only)* |
+| **`ESC`** | Exit the pond safely. *(TUI only)* |
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Python 3.13+** & **Raw ANSI Escape Sequences** (TUI Engine)
+- **Python 3.14+** & **Raw ANSI Escape Sequences** (TUI Engine)
 - **Node.js**, **VS Code Extension API**, and **HTML5/CSS3/JavaScript** (VS Code Webview Engine)
-- **PIL / Pillow** (For high-quality pixel art icon optimization)
+- **PIL / Pillow** *(build-time only, for icon optimization)*
 - **Love and Animal Magic** 💖🦆🐸
 
 ---

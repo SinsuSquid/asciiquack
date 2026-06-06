@@ -1,4 +1,4 @@
-from typing import List, Tuple, Union
+from typing import List, Tuple
 import random
 from frog import Frog
 from duck import Duck
@@ -76,7 +76,6 @@ class App:
         self.add_message("System", f"{self.animal.name} changed color to {self.color}!")
 
     def feed(self, width: int, height: int):
-        import random
         anim_height = (height * 3) // 4 if self.show_conversation else (height - 4)
         water_line = anim_height // 2
         
@@ -148,8 +147,6 @@ class App:
             self.input_buffer += char
 
     def process_sound(self, user_msg: str):
-        import random
-        
         sound = self.animal.sound
         sounds = [f"{sound}!", f"{sound} {sound.lower()}.", f"{sound.upper()}!", f"{sound}?", f"{sound}...", f"{sound}! ✨"]
         
