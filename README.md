@@ -75,12 +75,12 @@ The following keybindings work in **TUI Mode** and most also in **VS Code Extens
 
 | Key / Control | Action |
 | :--- | :--- |
-| **`Enter`** / **Send** | Send a message to your companion |
-| **`Tab`** / **🎨 Color** | Cycle colors (**Yellow ↔ Green ↔ Cyan ↔ Magenta ↔ Red ↔ White**) |
-| **`H`** / **🎩 Hat** | Cycle through hats (**None, Top Hat, Cap, Flower, Crown, Beret, Wizard, Bow**) 🎩👑🎀 |
-| **`F`** / **🌾 Feed** | Feed breadcrumbs to the pond 🥨 |
-| **`A`** / **🔄 Swap** | Switch between animal species (**Duck ↔ Frog**) |
-| **`C`** / **💬 Chat** | **Toggle Conversation Log:** Hides the console log and dynamically expands the pond animation height! |
+| **`Enter`** / **🚀 (Send)** | Send a message to your companion |
+| **`Tab`** / **🎨 (Color)** | Cycle colors (**Yellow ↔ Green ↔ Cyan ↔ Magenta ↔ Red ↔ White**) |
+| **`H`** / **🎩 (Hat)** | Cycle through hats (**None, Top Hat, Cap, Flower, Crown, Beret, Wizard, Bow**) 🎩👑🎀 |
+| **`F`** / **🌾 (Feed)** | Feed breadcrumbs to the pond 🥨 |
+| **`A`** / **🔄 (Swap)** | Switch between animal species (**Duck ↔ Frog**) |
+| **`C`** / **💬 (Chat)** | **Toggle Conversation Log:** Hides the console log and dynamically expands the pond animation height! |
 | **`M`** / **🗺️ Menu** | **Toggle Menu:** Hides/shows the menu bar and expands the animation to full screen! *(TUI only)* |
 | **`ESC`** | Exit the pond safely. *(TUI only)* |
 
